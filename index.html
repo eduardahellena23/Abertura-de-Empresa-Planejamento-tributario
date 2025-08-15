@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Planejamento Tributário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #1a202c;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full">
+        <!-- Espaço para a Logo -->
+        <div class="mb-6 flex justify-center">
+            <img src="https://placehold.co/150x50/1a202c/ffffff?text=Sua+Logo" alt="Logo do Escritório" class="h-12 w-auto">
+        </div>
+        
+        <h1 class="text-3xl font-bold mb-6 text-center text-indigo-600">Simulador de Planejamento Tributário</h1>
+        
+        <!-- Formulário para coletar os dados -->
+        <form id="tributarioForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex flex-col">
+                <label for="faturamento" class="text-sm font-medium text-gray-700">Faturamento Anual (R$)</label>
+                <input type="number" id="faturamento" name="faturamento" required step="0.01"
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="socio_outra_empresa" class="text-sm font-medium text-gray-700">Sócio de outra empresa?</label>
+                <select id="socio_outra_empresa" name="socio_outra_empresa" required
+                        class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="sim">Sim</option>
+                    <option value="não">Não</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="cnae" class="text-sm font-medium text-gray-700">CNAE</label>
+                <input type="text" id="cnae" name="cnae" required
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="municipio" class="text-sm font-medium text-gray-700">Município</label>
+                <input type="text" id="municipio" name="municipio" required
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="prolabore" class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
+                <input type="number" id="prolabore" name="prolabore" required step="0.01"
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="anexo" class="text-sm font-medium text-gray-700">Anexo Simples Nacional</label>
+                <input type="text" id="anexo" name="anexo" required
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="comparar" class="text-sm font-medium text-gray-700">Regime a Comparar</label>
+                <input type="text" id="comparar" name="comparar" required
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="prolabore_ideal" class="text-sm font-medium text-gray-700">Pró-labore Ideal (R$)</label>
+                <input type="number" id="prolabore_ideal" name="prolabore_ideal" required step="0.01"
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="tem_funcionarios" class="text-sm font-medium text-gray-700">Possui Funcionários?</label>
+                <select id="tem_funcionarios" name="tem_funcionarios" required
+                        class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="sim">Sim</option>
+                    <option value="não">Não</option>
+                </select>
+            </div>
+            
+            <div class="flex flex-col">
+                <label for="folha" class="text-sm font-medium text-gray-700">Valor da Folha (R$)</label>
+                <input type="number" id="folha" name="folha" required step="0.01"
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="icms" class="text-sm font-medium text-gray-700">ICMS (%)</label>
+                <input type="number" id="icms" name="icms" required step="0.01"
+                       class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="md:col-span-2 mt-4 text-center">
+                <button type="submit" id="submitButton"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg 
+                               shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Gerar e Baixar Planilha
+                </button>
+            </div>
+        </form>
+
+        <!-- Área para exibir o status e mensagens -->
+        <div class="mt-8 p-4 bg-gray-100 rounded-lg text-left">
+            <h2 class="text-xl font-semibold mb-2">Status do Processo:</h2>
+            <p id="statusMessage" class="text-gray-600">Preencha o formulário e clique no botão.</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('tributarioForm');
+        const submitButton = document.getElementById('submitButton');
+        const statusMessage = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede o envio padrão do formulário
+
+            // Desabilita o botão e atualiza a mensagem
+            submitButton.disabled = true;
+            statusMessage.textContent = 'Passo 1 de 2: Enviando dados para a API...';
+
+            // Coleta os dados do formulário
+            const formData = new FormData(form);
+            const dados = Object.fromEntries(formData.entries());
+            
+            // Converte valores numéricos para o tipo correto
+            dados.faturamento = parseFloat(dados.faturamento);
+            dados.prolabore = parseFloat(dados.prolabore);
+            dados.prolabore_ideal = parseFloat(dados.prolabore_ideal);
+            dados.folha = parseFloat(dados.folha);
+            dados.icms = parseFloat(dados.icms);
+
+            const apiUrlGerar = 'http://127.0.0.1:8000/gerar-planilha'; // Verifique a URL da sua API
+
+            try {
+                // PASSO 1: Envia os dados para a API para gerar a planilha.
+                const response = await fetch(apiUrlGerar, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erro ao gerar planilha. Verifique sua API.');
+                }
+
+                const result = await response.json();
+                const nomeArquivo = result.nome_arquivo;
+                
+                statusMessage.textContent = `Passo 2 de 2: Planilha gerada com sucesso! Iniciando o download de "${nomeArquivo}"...`;
+
+                // PASSO 2: Usa o nome do arquivo para fazer a chamada de download.
+                const downloadUrl = `http://127.0.0.1:8000/baixar-planilha/${nomeArquivo}`;
+                
+                // Cria um link temporário e simula o clique para iniciar o download
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute('download', nomeArquivo);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                statusMessage.textContent = 'Download da planilha concluído!';
+
+            } catch (error) {
+                statusMessage.textContent = `Erro: ${error.message}. Por favor, verifique o console para mais detalhes.`;
+                console.error(error);
+            } finally {
+                // Reabilita o botão no final do processo
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
