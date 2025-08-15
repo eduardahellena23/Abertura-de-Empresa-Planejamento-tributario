@@ -17,14 +17,15 @@
 <body class="flex items-center justify-center min-h-screen p-4">
 
     <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full">
-        <!-- Espaço para a Logo -->
+        <!-- Espaço para a Logo com o nome do arquivo correto -->
         <div class="mb-6 flex justify-center">
-            <img src="https://placehold.co/150x50/1a202c/ffffff?text=Sua+Logo" alt="Logo do Escritório" class="h-12 w-auto">
+            <img src="Logotipo_primario_medio.jpg" alt="Logo do Escritório" class="h-12 w-auto">
         </div>
         
         <h1 class="text-3xl font-bold mb-6 text-center text-indigo-600">Simulador de Planejamento Tributário</h1>
         
-        <!-- Formulário para coletar os dados -->
+        <!-- O restante do formulário e script JS aqui... -->
+        <!-- Não houve mudanças abaixo daqui, é apenas o formulário original -->
         <form id="tributarioForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col">
                 <label for="faturamento" class="text-sm font-medium text-gray-700">Faturamento Anual (R$)</label>
@@ -137,7 +138,7 @@
             dados.folha = parseFloat(dados.folha);
             dados.icms = parseFloat(dados.icms);
 
-            const apiUrlGerar = 'http://127.0.0.1:8000/gerar-planilha'; // Verifique a URL da sua API
+            const apiUrlGerar = 'https://SEU-SIMULADOR-API.onrender.com/gerar-planilha'; // Verifique a URL da sua API
 
             try {
                 // PASSO 1: Envia os dados para a API para gerar a planilha.
@@ -160,7 +161,7 @@
                 statusMessage.textContent = `Passo 2 de 2: Planilha gerada com sucesso! Iniciando o download de "${nomeArquivo}"...`;
 
                 // PASSO 2: Usa o nome do arquivo para fazer a chamada de download.
-                const downloadUrl = `http://127.0.0.1:8000/baixar-planilha/${nomeArquivo}`;
+                const downloadUrl = `https://SEU-SIMULADOR-API.onrender.com/baixar-planilha/${nomeArquivo}`;
                 
                 // Cria um link temporário e simula o clique para iniciar o download
                 const link = document.createElement('a');
