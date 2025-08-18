@@ -99,11 +99,10 @@
                            class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
-                <!-- Nova seção para os botões de Anexo -->
+                <!-- Seção para os botões de Anexo -->
                 <div class="flex flex-col md:col-span-2">
                     <label class="text-sm font-medium text-gray-700 mb-2">Anexo Simples Nacional</label>
                     <div id="anexo-buttons" class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        <!-- Botões de seleção para cada anexo -->
                         <button type="button" data-anexo="I" class="anexo-btn py-2 px-4 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-200 transition-all duration-200">
                             Anexo I
                         </button>
@@ -123,14 +122,24 @@
                             Anexo VI
                         </button>
                     </div>
-                    <!-- Campo oculto para enviar o valor selecionado no formulário -->
                     <input type="hidden" id="anexo" name="anexo" required>
                 </div>
 
-                <div class="flex flex-col">
-                    <label for="comparar" class="text-sm font-medium text-gray-700">Regime a Comparar</label>
-                    <input type="text" id="comparar" name="comparar" required
-                           class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <!-- Nova seção para os botões de Regime a Comparar -->
+                <div class="flex flex-col md:col-span-2">
+                    <label class="text-sm font-medium text-gray-700 mb-2">Regime a Comparar</label>
+                    <div id="comparar-buttons" class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <button type="button" data-comparar="Simples Nacional" class="comparar-btn py-2 px-4 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-200 transition-all duration-200">
+                            Simples Nacional
+                        </button>
+                        <button type="button" data-comparar="Lucro Presumido" class="comparar-btn py-2 px-4 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-200 transition-all duration-200">
+                            Lucro Presumido
+                        </button>
+                        <button type="button" data-comparar="Ambos" class="comparar-btn py-2 px-4 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-200 transition-all duration-200">
+                            Ambos
+                        </button>
+                    </div>
+                    <input type="hidden" id="comparar" name="comparar" required>
                 </div>
 
                 <div class="flex flex-col">
@@ -149,235 +158,4 @@
                 </div>
                 
                 <div class="flex flex-col">
-                    <label for="folha" class="text-sm font-medium text-gray-700">Valor da Folha (R$)</label>
-                    <input type="number" id="folha" name="folha" required step="0.01"
-                           class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-
-                <div class="flex flex-col">
-                    <label for="icms" class="text-sm font-medium text-gray-700">ICMS (%)</label>
-                    <input type="number" id="icms" name="icms" required step="0.01"
-                           class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
-
-                <div class="md:col-span-2 mt-4 text-center">
-                    <button type="submit" id="submitEmpresaButton"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg 
-                                   shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Gerar e Baixar Planilha
-                    </button>
-                    <button type="button" id="backToSplash1" class="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                        Voltar
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Formulário para Pessoa Física -->
-        <div id="pessoaFisicaFormPage" class="page">
-            <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Cálculo de Imposto de Renda</h1>
-            <form id="irpfForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <div class="md:col-span-2 flex flex-col">
-                    <label for="renda_mensal" class="text-sm font-medium text-gray-700">Renda Mensal (R$)</label>
-                    <input type="number" id="renda_mensal" name="renda_mensal" required step="0.01"
-                           class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500">
-                </div>
-
-                <div class="md:col-span-2 flex flex-col">
-                    <label for="despesas_dedutiveis" class="text-sm font-medium text-gray-700">Total de Despesas Dedutíveis (R$)</label>
-                    <input type="number" id="despesas_dedutiveis" name="despesas_dedutiveis" required step="0.01"
-                           class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500">
-                </div>
-
-                <div class="md:col-span-2 mt-4 text-center">
-                    <button type="submit" id="submitPfButton"
-                            class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-lg 
-                                   shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Gerar e Baixar Relatório
-                    </button>
-                    <button type="button" id="backToSplash2" class="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                        Voltar
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Área para exibir o status e mensagens -->
-        <div class="mt-8 p-4 bg-gray-100 rounded-lg text-left">
-            <h2 class="text-xl font-semibold mb-2">Status do Processo:</h2>
-            <p id="statusMessage" class="text-gray-600">Selecione uma opção para começar.</p>
-        </div>
-    </div>
-
-    <script>
-        // Mapeamento das páginas
-        const splashPage = document.getElementById('splashPage');
-        const empresaFormPage = document.getElementById('empresaFormPage');
-        const pessoaFisicaFormPage = document.getElementById('pessoaFisicaFormPage');
-
-        // Botões de navegação
-        const btnEmpresa = document.getElementById('btnEmpresa');
-        const btnPessoaFisica = document.getElementById('btnPessoaFisica');
-        const backToSplash1 = document.getElementById('backToSplash1');
-        const backToSplash2 = document.getElementById('backToSplash2');
-
-        // Formulários e botões de submit
-        const tributarioForm = document.getElementById('tributarioForm');
-        const irpfForm = document.getElementById('irpfForm');
-        const submitEmpresaButton = document.getElementById('submitEmpresaButton');
-        const submitPfButton = document.getElementById('submitPfButton');
-        const statusMessage = document.getElementById('statusMessage');
-
-        // URL base da sua API
-        // IMPORTANTE: Troque 'http://127.0.0.1:8000' pelo URL da sua API quando ela estiver hospedada
-        const apiUrlBase = 'http://127.0.0.1:8000';
-
-        // Função para alternar entre as páginas
-        function showPage(pageToShow) {
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => {
-                if (page.id === pageToShow) {
-                    page.style.display = 'flex';
-                } else {
-                    page.style.display = 'none';
-                }
-            });
-            statusMessage.textContent = 'Preencha o formulário e clique no botão.';
-        }
-
-        // Eventos de clique para os botões de navegação
-        btnEmpresa.addEventListener('click', () => showPage('empresaFormPage'));
-        btnPessoaFisica.addEventListener('click', () => showPage('pessoaFisicaFormPage'));
-        backToSplash1.addEventListener('click', () => showPage('splashPage'));
-        backToSplash2.addEventListener('click', () => showPage('splashPage'));
-
-        // Mostra a tela inicial ao carregar a página
-        window.onload = () => showPage('splashPage');
-
-        // Lógica de seleção do Anexo
-        const anexoButtons = document.querySelectorAll('.anexo-btn');
-        const anexoInput = document.getElementById('anexo');
-
-        anexoButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove a classe 'ativa' de todos os botões
-                anexoButtons.forEach(btn => {
-                    btn.classList.remove('bg-indigo-500', 'text-white', 'hover:bg-indigo-600');
-                    btn.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-200');
-                });
-                // Adiciona a classe 'ativa' ao botão clicado
-                button.classList.add('bg-indigo-500', 'text-white', 'hover:bg-indigo-600');
-                button.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-200');
-
-                // Define o valor do campo de input oculto
-                anexoInput.value = button.dataset.anexo;
-            });
-        });
-
-        // Lógica de submit para o formulário de Empresa
-        tributarioForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitEmpresaButton.disabled = true;
-            statusMessage.textContent = 'Passo 1 de 2: Enviando dados para a API...';
-
-            const formData = new FormData(tributarioForm);
-            const dados = Object.fromEntries(formData.entries());
-            
-            // Converte valores numéricos para o tipo correto
-            for (const key of ['faturamento', 'prolabore', 'prolabore_ideal', 'folha', 'icms']) {
-                if (dados[key]) dados[key] = parseFloat(dados[key]);
-            }
-            
-            // Adiciona os campos de nome e CNPJ ao objeto de dados
-            dados.nome_empresa = document.getElementById('nome_empresa').value;
-            dados.cnpj = document.getElementById('cnpj').value;
-
-
-            try {
-                // Chama o endpoint de gerar planilha para empresa
-                const response = await fetch(`${apiUrlBase}/gerar-planilha`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Erro ao gerar planilha. Verifique sua API.');
-                }
-
-                const result = await response.json();
-                const nomeArquivo = result.nome_arquivo;
-                
-                statusMessage.textContent = `Passo 2 de 2: Planilha gerada com sucesso! Iniciando o download de "${nomeArquivo}"...`;
-
-                const downloadUrl = `${apiUrlBase}/baixar-planilha/${nomeArquivo}`;
-                const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.setAttribute('download', nomeArquivo);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                statusMessage.textContent = 'Download da planilha concluído!';
-
-            } catch (error) {
-                statusMessage.textContent = `Erro: ${error.message}. Por favor, verifique o console para mais detalhes.`;
-                console.error(error);
-            } finally {
-                submitEmpresaButton.disabled = false;
-            }
-        });
-
-        // Lógica de submit para o formulário de Pessoa Física
-        irpfForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            submitPfButton.disabled = true;
-            statusMessage.textContent = 'Passo 1 de 2: Enviando dados para a API...';
-
-            const formData = new FormData(irpfForm);
-            const dados = Object.fromEntries(formData.entries());
-
-            // Converte valores numéricos para o tipo correto
-            for (const key of ['renda_mensal', 'despesas_dedutiveis']) {
-                if (dados[key]) dados[key] = parseFloat(dados[key]);
-            }
-
-            try {
-                // IMPORTANTE: Este endpoint `/gerar-relatorio-pf` precisa ser criado na sua API Python
-                const response = await fetch(`${apiUrlBase}/gerar-relatorio-pf`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Erro ao gerar relatório. Verifique sua API.');
-                }
-
-                const result = await response.json();
-                const nomeArquivo = result.nome_arquivo;
-                
-                statusMessage.textContent = `Passo 2 de 2: Relatório gerado com sucesso! Iniciando o download de "${nomeArquivo}"...`;
-
-                // IMPORTANTE: Este endpoint `/baixar-relatorio-pf` precisa ser criado na sua API Python
-                const downloadUrl = `${apiUrlBase}/baixar-relatorio-pf/${nomeArquivo}`;
-                const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.setAttribute('download', nomeArquivo);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                statusMessage.textContent = 'Download do relatório concluído!';
-
-            } catch (error) {
-                statusMessage.textContent = `Erro: ${error.message}. Por favor, verifique o console para mais detalhes.`;
-                console.error(error);
-            } finally {
-                submitPfButton.disabled = false;
-            }
-        });
-    </script>
-</body>
-</html>
+                    <label for="folha" class="text-sm font-medium text-gra
