@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Tributário</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0b1023; color:#e5e7eb; }
+    .card { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 16px; }
+    .muted { color:#9ca3af; }
+    .title { color:#93c5fd; }
+    table { width:100%; border-collapse: collapse; }
+    th,td{ padding:10px; border-bottom:1px solid rgba(255,255,255,0.08) }
+    th{ color:#a5b4fc; font-weight:600; text-align:left }
+    .kpi { font-size:1.75rem; font-weight:800 }
+    .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid rgba(255,255,255,.2) }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold title">📊 Dashboard Tributário</h1>
+    <p class="muted text-sm">Visualização interativa do comparativo Simples x Presumido</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 space-y-6">
+
+    <!-- Identificação -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card">
+        <div class="muted text-xs">Empresa</div>
+        <div id="empresaNome" class="text-lg font-semibold"></div>
+        <div id="empresaCNPJ" class="muted text-xs"></div>
+      </div>
+      <div class="card">
+        <div class="muted text-xs">Município</div>
+        <div id="empresaMunicipio" class="text-lg font-semibold"></div>
+        <div class="muted text-xs">
+          <span id="empresaTipo" class="chip"></span>
+          <span id="regimeAtual" class="chip ml-2"></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="muted text-xs">CNAE</div>
+        <div id="empresaCNAE" class="text-lg font-semibold"></div>
+        <div id="flagsCNAE" class="muted text-xs"></div>
+      </div>
+    </section>
+
+    <!-- KPIs -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="card">
+        <div class="muted text-xs">Base de cálculo utilizada</div>
+        <div id="kpiBase" class="kpi"></div>
+      </div>
+      <div class="card">
+        <div class="muted text-xs">Alíquota efetiva — Simples</div>
+        <div id="kpiAliqS" class="kpi"></div>
+      </div>
+      <div class="card">
+        <div class="muted text-xs">Alíquota efetiva — Presumido</div>
+        <div id="kpiAliqP" class="kpi"></div>
+      </div>
+      <div class="card">
+        <div class="muted text-xs">Regime mais vantajoso</div>
+        <div id="kpiMelhor" class="kpi"></div>
+        <div id="kpiEconomia" class="muted text-xs"></div>
+      </div>
+    </section>
+
+    <!-- Gráficos -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="card">
+        <div class="muted text-sm mb-2">Comparativo de impostos</div>
+        <canvas id="chartBarras" height="280"></canvas>
+      </div>
+      <div class="card">
+        <div class="muted text-sm mb-2">Participação relativa</div>
+        <canvas id="chartPizza" height="280"></canvas>
+      </div>
+    </section>
+
+    <!-- Tabela atividades -->
+    <section class="card">
+      <div class="muted text-sm mb-3">Separação por atividade</div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Atividade</th>
+              <th>Receita 12m</th>
+              <th>Estimativa Próx. Ano</th>
+              <th>Exportação</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyAtividades"></tbody>
+          <tfoot>
+            <tr><td colspan="4" id="totaisExport" class="pt-2 muted"></td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- Ações -->
+    <section class="flex flex-col md:flex-row gap-3 pb-10">
+      <button id="btnVoltar" class="px-4 py-2 rounded-lg bg-white/10 border border-white/20 hover:bg-white/20">← Voltar ao formulário</button>
+      <button id="btnLimpar" class="px-4 py-2 rounded-lg bg-red-500/20 text-red-100 border border-red-500/40 hover:bg-red-500/30">Limpar dados salvos</button>
+      <button id="btnCSV" class="px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-100 border border-emerald-500/40 hover:bg-emerald-500/30">Exportar atividades (CSV)</button>
+    </section>
+  </main>
+
+  <script>
+    // ===== Helpers
+    const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
+    function safeGet(obj, path, fallback=null){
+      return path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
+    }
+
+    // ===== Carregar análise do localStorage (ou usar dummy)
+    const saved = localStorage.getItem('analiseTributaria');
+    const data = saved ? JSON.parse(saved) : {
+      empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00'},
+      calculo:{ base_utilizada: 800000, melhor_regime: 'Simples',
+        simples:{ imposto:120000, aliquota_fmt:'15,00%' },
+        presumido:{ imposto:150000, aliquota_fmt:'18,75%' },
+        economia_fmt: 'R$ 30.000,00'
+      },
+      atividades:{itens:[
+        {nome:'Serviços', receita_12m:500000, estimativa_proximo_ano:550000, exportacao:false},
+        {nome:'Consultoria', receita_12m:300000, estimativa_proximo_ano:320000, exportacao:true},
+      ], totais_exportacao:{receita_12m:300000, estimativa_prox_ano:320000, receita_12m_fmt:'R$ 300.000,00', estimativa_prox_ano_fmt:'R$ 320.000,00'}}
+    };
+
+    // ===== Preencher cabeçalhos
+    document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
+    document.getElementById('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
+    document.getElementById('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
+    document.getElementById('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
+    document.getElementById('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
+    const regAtual = safeGet(data,'empresa.regime_atual', null);
+    if(regAtual) document.getElementById('regimeAtual').textContent = 'Regime atual: ' + regAtual;
+    // flags CNAE
+    const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
+    document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
+
+    // ===== KPIs
+    document.getElementById('kpiBase').textContent  = brl(safeGet(data,'calculo.base_utilizada',0));
+    document.getElementById('kpiAliqS').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
+    document.getElementById('kpiAliqP').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
+    document.getElementById('kpiMelhor').textContent= safeGet(data,'calculo.melhor_regime','—');
+    document.getElementById('kpiEconomia').textContent = 'Economia estimada: ' + safeGet(data,'calculo.economia_fmt','—');
+
+    // ===== Gráficos (Chart.js)
+    const vS = safeGet(data,'calculo.simples.imposto',0);
+    const vP = safeGet(data,'calculo.presumido.imposto',0);
+
+    const ctxBar = document.getElementById('chartBarras').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['Simples', 'Presumido'],
+        datasets: [{
+          label: 'Impostos (R$)',
+          data: [vS, vP],
+          backgroundColor: ['#60a5fa','#f87171'],
+          borderColor: ['#3b82f6','#ef4444'],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
+      }
+    });
+
+    const ctxPie = document.getElementById('chartPizza').getContext('2d');
+    new Chart(ctxPie, {
+      type: 'doughnut',
+      data: {
+        labels: ['Simples','Presumido'],
+        datasets: [{ data:[vS,vP], backgroundColor:['#60a5fa','#f87171'] }]
+      },
+      options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
+    });
+
+    // ===== Tabela de atividades
+    const tb = document.getElementById('tbodyAtividades');
+    const itens = safeGet(data,'atividades.itens',[]) || [];
+    tb.innerHTML = '';
+    itens.forEach(it=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${it.nome||'-'}</td>
+        <td>${brl(it.receita_12m||0)}</td>
+        <td>${brl(it.estimativa_proximo_ano||0)}</td>
+        <td>${it.exportacao ? 'Sim':'Não'}</td>`;
+      tb.appendChild(tr);
+    });
+    const tot = safeGet(data,'atividades.totais_exportacao',null);
+    if(tot){
+      document.getElementById('totaisExport').innerHTML =
+        `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
+    }
+
+    // ===== Ações
+    document.getElementById('btnVoltar').addEventListener('click', ()=> history.back());
+    document.getElementById('btnLimpar').addEventListener('click', ()=>{
+      localStorage.removeItem('analiseTributaria');
+      alert('Dados limpos. Volte ao formulário para gerar novamente.');
+      location.href = '/';
+    });
+
+    // Exportar CSV das atividades
+    document.getElementById('btnCSV').addEventListener('click', ()=>{
+      const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
+      itens.forEach(it=> rows.push([
+        it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não'
+      ]));
+      const csv = rows.map(r=> r.map(v=>{
+        const s = String(v).replace(/"/g,'""');
+        return `"${s}"`;
+      }).join(',')).join('\n');
+
+      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'atividades.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  </script>
+</body>
+</html>
