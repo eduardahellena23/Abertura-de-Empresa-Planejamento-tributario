@@ -10,7 +10,6 @@
     body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1a202c; }
     .page { display: none; }
     .page-container { z-index: 10; }
-    .btn-active { @apply bg-indigo-500 text-white hover:bg-indigo-600 !important; }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -359,28 +358,60 @@
     // ===== Botões “Anexo”
     const anexoButtons = document.querySelectorAll('.anexo-btn');
     const anexoInput = document.getElementById('anexo');
-    anexoButtons.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        anexoButtons.forEach(b=>b.classList.remove('btn-active'));
-        btn.classList.add('btn-active');
-        anexoInput.value = btn.dataset.anexo;
+
+    function setAnexoActive(btn) {
+      anexoButtons.forEach(b => {
+        b.classList.remove('bg-indigo-500','text-white','hover:bg-indigo-600','border-indigo-600');
+        b.classList.add('bg-white','text-gray-700','hover:bg-gray-200','border','border-gray-300');
+      });
+      btn.classList.add('bg-indigo-500','text-white','hover:bg-indigo-600','border-indigo-600');
+      btn.classList.remove('bg-white','text-gray-700','hover:bg-gray-200','border-gray-300');
+    }
+
+    anexoButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        setAnexoActive(button);
+        anexoInput.value = button.dataset.anexo;
       });
     });
+
+    // (Opcional) Selecionar um anexo por padrão:
+    if (!anexoInput.value && anexoButtons[0]) {
+      setAnexoActive(anexoButtons[0]);
+      anexoInput.value = anexoButtons[0].dataset.anexo;
+    }
 
     // ===== Botões “Comparar”
     const compararButtons = document.querySelectorAll('.comparar-btn');
     const compararInput = document.getElementById('comparar');
-    compararButtons.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        compararButtons.forEach(b=>b.classList.remove('btn-active'));
-        btn.classList.add('btn-active');
-        compararInput.value = btn.dataset.comparar;
+
+    function setCompararActive(btn) {
+      compararButtons.forEach(b => {
+        b.classList.remove('bg-indigo-500','text-white','hover:bg-indigo-600','border-indigo-600');
+        b.classList.add('bg-white','text-gray-700','hover:bg-gray-200','border','border-gray-300');
+      });
+      btn.classList.add('bg-indigo-500','text-white','hover:bg-indigo-600','border-indigo-600');
+      btn.classList.remove('bg-white','text-gray-700','hover:bg-gray-200','border-gray-300');
+    }
+
+    compararButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        setCompararActive(button);
+        compararInput.value = button.dataset.comparar;
       });
     });
 
+    // (Opcional) Selecionar um regime por padrão:
+    if (!compararInput.value && compararButtons[0]) {
+      setCompararActive(compararButtons[0]);
+      compararInput.value = compararButtons[0].dataset.comparar;
+    }
+
     // ===== Tabela de atividades
-    const tblAtividades = document.getElementById('tblAtividades').querySelector('tbody');
-    document.getElementById('btnAddAtividade').addEventListener('click', ()=>{
+    const tblAtividades = document.getElementById('tblAtividades')?.querySelector('tbody');
+    document.getElementById('btnAddAtividade')?.addEventListener('click', ()=>{
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="py-2 pr-2"><input type="text" class="w-full p-2 border border-gray-300 rounded" placeholder="Atividade"></td>
@@ -409,11 +440,23 @@
       submitEmpresaButton.disabled = true;
       statusMessage.textContent = 'Passo 1 de 2: Enviando dados para a API...';
 
+      // Garantir seleções essenciais
+      if (!anexoInput.value) {
+        statusMessage.textContent = 'Selecione um Anexo do Simples.';
+        submitEmpresaButton.disabled = false;
+        return;
+      }
+      if (!compararInput.value) {
+        statusMessage.textContent = 'Selecione o regime a comparar.';
+        submitEmpresaButton.disabled = false;
+        return;
+      }
+
       // Campos base (já existentes)
       const dados = {
         nome_empresa: document.getElementById('nome_empresa').value || '',
         cnpj: document.getElementById('cnpj').value || null,
-        tipo_empresa: tipoEmpresa.value, // aqui usamos “abertura/constituida”; o backend usa mesmo nome mas quem manda é empresa_constituida
+        tipo_empresa: tipoEmpresa.value, // 'abertura' ou 'constituida'
         faturamento: parseFloat(document.getElementById('faturamento').value || '0'),
         socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
         cnae: document.getElementById('cnae').value || '',
@@ -426,7 +469,7 @@
         folha: parseFloat(document.getElementById('folha').value || '0'),
         icms: parseFloat(document.getElementById('icms').value || '0'),
 
-        // chave nova (bool)
+        // chave nova (bool esperada pelo backend)
         empresa_constituida: (tipoEmpresa.value === 'constituida'),
       };
 
