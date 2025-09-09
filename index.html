@@ -17,6 +17,7 @@
   <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full page-container">
     <!-- Logo -->
     <div class="mb-6 flex justify-center">
+      <!-- Se este arquivo estiver em /static/index.html, deixe o caminho como abaixo -->
       <img src="Logotipo_primario_medio.jpg" alt="Logo do Escritório" class="h-12 w-auto">
     </div>
 
@@ -317,8 +318,8 @@
     backToSplash2?.addEventListener('click', ()=>showPage('splashPage'));
     window.onload = ()=>showPage('splashPage');
 
-    // ===== API
-    const apiUrlBase = 'http://127.0.0.1:8000';
+    // ===== API (origem automática: funciona em localhost e ngrok)
+    const apiUrlBase = location.origin.replace(/\/$/, '');
 
     // ===== Helpers
     function parseNumBR(v){
@@ -478,7 +479,7 @@
         if(!resp.ok){ const err = await resp.json().catch(()=>({detail:'Erro ao analisar dados.'})); throw new Error(err.detail || 'Erro ao analisar.'); }
         const json = await resp.json();
         localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        window.location.href = '/dashboard';
+        window.location.href = `${apiUrlBase}/dashboard`; // ✅ abre no mesmo backend
         statusMessage.textContent = 'Dashboard aberto.';
       }catch(e){
         console.error(e); statusMessage.textContent = `Erro: ${e.message}`;
