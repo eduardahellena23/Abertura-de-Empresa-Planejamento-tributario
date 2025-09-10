@@ -251,7 +251,7 @@
         }
         const json = await resp.json();
         localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        window.location.href = `${apiUrlBase}/dashboard`; // abre dashboard servido pela API via ngrok
+        window.location.href = "dashboard.html"; // abre dashboard servido pela API via ngrok
       }catch(e){
         statusMessage.textContent = `Erro de rede: ${e.message}`;
       }finally{
@@ -289,3 +289,4 @@
   </script>
 </body>
 </html>
+
