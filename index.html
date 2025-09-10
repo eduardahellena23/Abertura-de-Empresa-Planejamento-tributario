@@ -12,6 +12,79 @@
     .page-container { z-index: 10; }
   </style>
 </head>
+
+<script>
+// ======== CONFIG ========
+const apiUrlBase = window.apiUrlBase || "http://127.0.0.1:8000"; // troque pelo seu ngrok quando publicar
+
+// ======== ELEMENTOS ========
+const cnaeInput = document.getElementById('cnae');
+const anexoHidden = document.getElementById('anexo');
+const faturamentoEl = document.getElementById('faturamento');
+const folhaEl = document.getElementById('folha'); // usa o campo de folha já existente
+const statusEl = document.getElementById('statusMessage');
+
+// ======== UI helper: acionar botão de anexo ========
+function setAnexoButtonActive(anexo){
+  const btns = document.querySelectorAll('.anexo-btn');
+  if (!btns || !btns.length) return;
+  btns.forEach(btn=>{
+    btn.classList.remove('bg-indigo-500','text-white','border-indigo-600');
+    btn.classList.add('bg-white','text-gray-700','border','border-gray-300');
+    if(btn.dataset.anexo === anexo){
+      btn.classList.add('bg-indigo-500','text-white','border-indigo-600');
+      btn.classList.remove('bg-white','text-gray-700','border-gray-300');
+    }
+  });
+}
+
+// ======== Chamada à API para sugerir anexo ========
+async function sugerirAnexoPorCNAE(){
+  const raw = (cnaeInput?.value || '').trim();
+  if(!raw) return;
+
+  const rbt12 = parseFloat(faturamentoEl?.value || '0') || 0;   // pode trocar por média 12m se quiser
+  const folha12 = parseFloat(folhaEl?.value || '0') || 0;
+
+  try{
+    statusEl && (statusEl.textContent = 'Consultando CNAE para sugerir Anexo...');
+    const url = `${apiUrlBase}/cnae/${encodeURIComponent(raw)}?rbt12=${rbt12}&folha12=${folha12}`;
+    const resp = await fetch(url);
+    if(!resp.ok){
+      const txt = await resp.text();
+      throw new Error(txt || 'CNAE não mapeado.');
+    }
+    const json = await resp.json();
+
+    // Preenche hidden e atualiza UI
+    anexoHidden.value = json.sugestao_anexo;
+    setAnexoButtonActive(json.sugestao_anexo);
+
+    // Dica visual
+    statusEl && (statusEl.textContent = `CNAE ${json.cnae} → sugerido Anexo ${json.sugestao_anexo}${json.fator_r ? ' (fator R)' : ''}.`);
+    console.log('[CNAE]', json);
+  }catch(e){
+    console.warn('[CNAE] erro:', e.message);
+    statusEl && (statusEl.textContent = 'CNAE não mapeado ou erro na consulta. Selecione o Anexo manualmente.');
+  }
+}
+
+// ======== Disparadores ========
+// Quando sair do campo CNAE:
+cnaeInput && cnaeInput.addEventListener('blur', sugerirAnexoPorCNAE);
+
+// Recalcular sugestão se mudar faturamento/folha (por causa do Fator R):
+faturamentoEl && faturamentoEl.addEventListener('change', sugerirAnexoPorCNAE);
+folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
+
+// Também tenta sugerir ao carregar, se já houver CNAE digitado:
+window.addEventListener('DOMContentLoaded', ()=> {
+  if(cnaeInput && cnaeInput.value.trim()){
+    sugerirAnexoPorCNAE();
+  }
+});
+</script>
+
 <body class="flex items-center justify-center min-h-screen p-4">
 
   <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full page-container">
@@ -289,4 +362,5 @@
   </script>
 </body>
 </html>
+
 
