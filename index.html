@@ -12,83 +12,10 @@
     .page-container { z-index: 10; }
   </style>
 </head>
-
-<script>
-// ======== CONFIG ========
-const apiUrlBase = window.apiUrlBase || "http://127.0.0.1:8000"; // troque pelo seu ngrok quando publicar
-
-// ======== ELEMENTOS ========
-const cnaeInput = document.getElementById('cnae');
-const anexoHidden = document.getElementById('anexo');
-const faturamentoEl = document.getElementById('faturamento');
-const folhaEl = document.getElementById('folha'); // usa o campo de folha já existente
-const statusEl = document.getElementById('statusMessage');
-
-// ======== UI helper: acionar botão de anexo ========
-function setAnexoButtonActive(anexo){
-  const btns = document.querySelectorAll('.anexo-btn');
-  if (!btns || !btns.length) return;
-  btns.forEach(btn=>{
-    btn.classList.remove('bg-indigo-500','text-white','border-indigo-600');
-    btn.classList.add('bg-white','text-gray-700','border','border-gray-300');
-    if(btn.dataset.anexo === anexo){
-      btn.classList.add('bg-indigo-500','text-white','border-indigo-600');
-      btn.classList.remove('bg-white','text-gray-700','border-gray-300');
-    }
-  });
-}
-
-// ======== Chamada à API para sugerir anexo ========
-async function sugerirAnexoPorCNAE(){
-  const raw = (cnaeInput?.value || '').trim();
-  if(!raw) return;
-
-  const rbt12 = parseFloat(faturamentoEl?.value || '0') || 0;   // pode trocar por média 12m se quiser
-  const folha12 = parseFloat(folhaEl?.value || '0') || 0;
-
-  try{
-    statusEl && (statusEl.textContent = 'Consultando CNAE para sugerir Anexo...');
-    const url = `${apiUrlBase}/cnae/${encodeURIComponent(raw)}?rbt12=${rbt12}&folha12=${folha12}`;
-    const resp = await fetch(url);
-    if(!resp.ok){
-      const txt = await resp.text();
-      throw new Error(txt || 'CNAE não mapeado.');
-    }
-    const json = await resp.json();
-
-    // Preenche hidden e atualiza UI
-    anexoHidden.value = json.sugestao_anexo;
-    setAnexoButtonActive(json.sugestao_anexo);
-
-    // Dica visual
-    statusEl && (statusEl.textContent = `CNAE ${json.cnae} → sugerido Anexo ${json.sugestao_anexo}${json.fator_r ? ' (fator R)' : ''}.`);
-    console.log('[CNAE]', json);
-  }catch(e){
-    console.warn('[CNAE] erro:', e.message);
-    statusEl && (statusEl.textContent = 'CNAE não mapeado ou erro na consulta. Selecione o Anexo manualmente.');
-  }
-}
-
-// ======== Disparadores ========
-// Quando sair do campo CNAE:
-cnaeInput && cnaeInput.addEventListener('blur', sugerirAnexoPorCNAE);
-
-// Recalcular sugestão se mudar faturamento/folha (por causa do Fator R):
-faturamentoEl && faturamentoEl.addEventListener('change', sugerirAnexoPorCNAE);
-folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
-
-// Também tenta sugerir ao carregar, se já houver CNAE digitado:
-window.addEventListener('DOMContentLoaded', ()=> {
-  if(cnaeInput && cnaeInput.value.trim()){
-    sugerirAnexoPorCNAE();
-  }
-});
-</script>
-
 <body class="flex items-center justify-center min-h-screen p-4">
 
   <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full page-container">
-    <!-- Logo (coloque o arquivo no próprio repo do GH Pages) -->
+    <!-- Logo -->
     <div class="mb-6 flex justify-center">
       <img src="Logotipo_primario_medio.jpg" alt="Logo do Escritório" class="h-12 w-auto">
     </div>
@@ -96,7 +23,7 @@ window.addEventListener('DOMContentLoaded', ()=> {
     <!-- Splash -->
     <div id="splashPage" class="page flex flex-col items-center justify-center text-center">
       <h1 class="text-3xl font-bold mb-6 text-indigo-600">O que você deseja simular?</h1>
-      <div class="space-y-4">
+      <div class="space-y-4 w-full">
         <button id="btnEmpresa" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
           Planejamento para Empresa
         </button>
@@ -152,26 +79,34 @@ window.addEventListener('DOMContentLoaded', ()=> {
 
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">CNAE (formulário)</label>
-          <input type="text" id="cnae" required class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="cnae" required class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 47.11-3-01">
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
           <input type="number" id="prolabore" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
+        <!-- Anexo (caixinha + Editar) -->
         <div class="flex flex-col md:col-span-2">
           <label class="text-sm font-medium text-gray-700 mb-2">Anexo Simples Nacional</label>
-          <div id="anexo-buttons" class="grid grid-cols-2 md:grid-cols-3 gap-2">
-            <button type="button" data-anexo="I"   class="anexo-btn py-2 px-4 rounded-md border border-gray-300">Anexo I</button>
-            <button type="button" data-anexo="II"  class="anexo-btn py-2 px-4 rounded-md border border-gray-300">Anexo II</button>
-            <button type="button" data-anexo="III" class="anexo-btn py-2 px-4 rounded-md border border-gray-300">Anexo III</button>
-            <button type="button" data-anexo="IV"  class="anexo-btn py-2 px-4 rounded-md border border-gray-300">Anexo IV</button>
-            <button type="button" data-anexo="V"   class="anexo-btn py-2 px-4 rounded-md border border-gray-300">Anexo V</button>
-            <button type="button" data-anexo="VI"  class="anexo-btn py-2 px-4 rounded-md border border-gray-300">Anexo VI</button>
+          <div class="flex items-center gap-2">
+            <select id="anexoSelect" class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 disabled:text-gray-500" disabled>
+              <option value="">Selecione...</option>
+              <option value="I">Anexo I</option>
+              <option value="II">Anexo II</option>
+              <option value="III">Anexo III</option>
+              <option value="IV">Anexo IV</option>
+              <option value="V">Anexo V</option>
+            </select>
+            <button type="button" id="btnLiberarAnexo" class="px-3 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-100">
+              Editar
+            </button>
           </div>
           <input type="hidden" id="anexo" required>
+          <p id="anexoHint" class="text-xs text-gray-500 mt-1"></p>
         </div>
 
+        <!-- Regime a Comparar -->
         <div class="flex flex-col md:col-span-2">
           <label class="text-sm font-medium text-gray-700 mb-2">Regime a Comparar</label>
           <div id="comparar-buttons" class="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -203,11 +138,12 @@ window.addEventListener('DOMContentLoaded', ()=> {
           <input type="number" id="folha" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
-        <!-- Campos de empresa constituída (iguais aos seus) -->
+        <!-- Campos de empresa constituída (se você tiver, pode manter aqui) -->
         <div id="constitFields" class="md:col-span-2 p-4 rounded-lg border border-indigo-200 bg-indigo-50" style="display:none;">
-          <!-- ... (mantém igual) ... -->
+          <!-- seus campos extras aqui -->
         </div>
 
+        <!-- Ações -->
         <div class="md:col-span-2 mt-2 text-center">
           <div class="flex flex-col md:flex-row items-center justify-center gap-3">
             <button type="submit" id="btnDashboard"
@@ -227,22 +163,25 @@ window.addEventListener('DOMContentLoaded', ()=> {
       </form>
     </div>
 
+    <!-- Pessoa Física -->
     <div id="pessoaFisicaFormPage" class="page">
       <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Cálculo de Imposto de Renda</h1>
       <form id="irpfForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- ... (mantém igual) ... -->
+        <!-- seus campos de IRPF aqui -->
       </form>
     </div>
 
+    <!-- Status -->
     <div class="mt-8 p-4 bg-gray-100 rounded-lg text-left">
       <h2 class="text-xl font-semibold mb-2">Status do Processo:</h2>
       <p id="statusMessage" class="text-gray-600">Selecione uma opção para começar.</p>
     </div>
   </div>
 
+  <!-- Scripts (DEIXE NO FINAL) -->
   <script>
-    // ===== API: fixa no seu NGROK (produção via GitHub Pages)
-    const apiUrlBase = "https://5259771d5c27.ngrok-free.app";
+    // ===== CONFIG: sua API (troque pelo seu ngrok em produção)
+    const apiUrlBase = "http://127.0.0.1:8000"; // ex.: "https://SEU-ID.ngrok-free.app"
 
     // ===== Navegação básica
     const splashPage = document.getElementById('splashPage');
@@ -262,26 +201,88 @@ window.addEventListener('DOMContentLoaded', ()=> {
     btnPessoaFisica?.addEventListener('click', ()=>showPage('pessoaFisicaFormPage'));
     backToSplash1?.addEventListener('click', ()=>showPage('splashPage'));
 
-    // ===== Botões de Anexo/Comparar (iguais ao seu — preenchem inputs hidden)
-    const anexoButtons = document.querySelectorAll('.anexo-btn');
-    const anexoInput = document.getElementById('anexo');
-    function setAnexoActive(btn) {
-      anexoButtons.forEach(b => b.classList.remove('bg-indigo-500','text-white'));
-      btn.classList.add('bg-indigo-500','text-white');
-    }
-    anexoButtons.forEach(button => button.addEventListener('click', (e) => { e.preventDefault(); setAnexoActive(button); anexoInput.value = button.dataset.anexo; }));
+    // ===== Mostrar campo % se “sim” em sócio outra empresa
+    const socioOutra = document.getElementById('socio_outra_empresa');
+    const wrapPercentual = document.getElementById('wrap_percentual');
+    function togglePercentual(){ wrapPercentual.style.display = (socioOutra.value === 'sim') ? 'block' : 'none'; }
+    socioOutra.addEventListener('change', togglePercentual);
+    togglePercentual();
 
+    // ===== Regime a comparar (mantido)
     const compararButtons = document.querySelectorAll('.comparar-btn');
     const compararInput = document.getElementById('comparar');
     function setCompararActive(btn) {
       compararButtons.forEach(b => b.classList.remove('bg-indigo-500','text-white'));
       btn.classList.add('bg-indigo-500','text-white');
     }
-    compararButtons.forEach(button => button.addEventListener('click', (e) => { e.preventDefault(); setCompararActive(button); compararInput.value = button.dataset.comparar; }));
+    compararButtons.forEach(button => button.addEventListener('click', (e) => {
+      e.preventDefault(); setCompararActive(button); compararInput.value = button.dataset.comparar;
+    }));
 
-    // ===== Montar payload (igual ao seu, condensado)
+    // ===== Anexo (select + Editar/Concluir)
+    const anexoHidden   = document.getElementById('anexo');
+    const anexoSelect   = document.getElementById('anexoSelect');
+    const btnLiberar    = document.getElementById('btnLiberarAnexo');
+    const anexoHint     = document.getElementById('anexoHint');
+
+    btnLiberar?.addEventListener('click', ()=>{
+      anexoSelect.disabled = !anexoSelect.disabled;
+      btnLiberar.textContent = anexoSelect.disabled ? 'Editar' : 'Concluir';
+      if (anexoSelect.disabled) {
+        anexoHidden.value = anexoSelect.value || "";
+      }
+    });
+
+    function setAnexoValue(anexo, hintText = ""){
+      anexoSelect.value = anexo || "";
+      anexoHidden.value = anexo || "";
+      anexoHint.textContent = hintText || "";
+    }
+
+    // ===== CNAE → sugere Anexo
+    const cnaeInput     = document.getElementById('cnae');
+    const faturamentoEl = document.getElementById('faturamento');
+    const folhaEl       = document.getElementById('folha');
+
+    async function sugerirAnexoPorCNAE(){
+      const raw = (cnaeInput?.value || '').trim();
+      if(!raw) return;
+
+      const rbt12  = parseFloat(faturamentoEl?.value || '0') || 0;
+      const folha  = parseFloat(folhaEl?.value || '0') || 0;
+
+      try{
+        statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
+        const url = `${apiUrlBase}/cnae/${encodeURIComponent(raw)}?rbt12=${rbt12}&folha12=${folha}`;
+        const resp = await fetch(url);
+        if(!resp.ok){
+          const txt = await resp.text();
+          throw new Error(txt || 'CNAE não mapeado.');
+        }
+        const json = await resp.json();
+
+        const possiveis = (json.anexos_possiveis || []).join(' / ');
+        const dica = `CNAE ${json.cnae}: ${json.descricao} • Possíveis: ${possiveis}${json.fator_r ? ' (Fator R)' : ''}. Sugerido: ${json.sugestao_anexo}.`;
+        setAnexoValue(json.sugestao_anexo, dica);
+
+        // trava edição após sugerir
+        anexoSelect.disabled = true;
+        statusMessage.textContent = 'Anexo sugerido automaticamente pelo CNAE.';
+      }catch(e){
+        console.warn('[CNAE] erro:', e.message);
+        setAnexoValue("", "CNAE não mapeado. Clique em Editar e selecione o Anexo manualmente.");
+        anexoSelect.disabled = false;
+        statusMessage.textContent = 'CNAE não mapeado. Selecione manualmente.';
+      }
+    }
+
+    cnaeInput && cnaeInput.addEventListener('blur', sugerirAnexoPorCNAE);
+    faturamentoEl && faturamentoEl.addEventListener('change', sugerirAnexoPorCNAE);
+    folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
+
+    // ===== Payload
     function montarPayload(){
-      const dados = {
+      return {
         nome_empresa: document.getElementById('nome_empresa').value || '',
         cnpj: document.getElementById('cnpj').value || null,
         tipo_empresa: document.getElementById('tipo_empresa').value,
@@ -298,19 +299,19 @@ window.addEventListener('DOMContentLoaded', ()=> {
         icms: parseFloat(document.getElementById('icms').value || '0'),
         empresa_constituida: (document.getElementById('tipo_empresa').value === 'constituida'),
       };
-      return dados;
     }
 
     // ===== Submit: Dashboard
     const tributarioForm = document.getElementById('tributarioForm');
-    const btnDashboard = document.getElementById('btnDashboard');
+    const btnDashboard   = document.getElementById('btnDashboard');
+
     tributarioForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
       btnDashboard.disabled = true;
       statusMessage.textContent = 'Enviando dados para análise (dashboard)...';
 
       const dados = montarPayload();
-      if(!dados.anexo){ statusMessage.textContent = 'Selecione um Anexo do Simples.'; btnDashboard.disabled=false; return; }
+      if(!dados.anexo){ statusMessage.textContent = 'Selecione o Anexo do Simples.'; btnDashboard.disabled=false; return; }
       if(!dados.comparar){ statusMessage.textContent = 'Selecione o regime a comparar.'; btnDashboard.disabled=false; return; }
 
       try{
@@ -324,7 +325,9 @@ window.addEventListener('DOMContentLoaded', ()=> {
         }
         const json = await resp.json();
         localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        window.location.href = "dashboard.html"; // abre dashboard servido pela API via ngrok
+        // Se seu dashboard está no GitHub Pages, use "dashboard.html".
+        // Se preferir usar o da API, troque por: window.location.href = `${apiUrlBase}/dashboard`;
+        window.location.href = "dashboard.html";
       }catch(e){
         statusMessage.textContent = `Erro de rede: ${e.message}`;
       }finally{
@@ -332,7 +335,7 @@ window.addEventListener('DOMContentLoaded', ()=> {
       }
     });
 
-    // ===== Botão: Excel
+    // ===== Excel
     const btnExcel = document.getElementById('btnExcel');
     btnExcel.addEventListener('click', async ()=>{
       btnExcel.disabled = true;
@@ -359,8 +362,13 @@ window.addEventListener('DOMContentLoaded', ()=> {
         btnExcel.disabled = false;
       }
     });
+
+    // Sugere anexo se já houver CNAE preenchido ao carregar
+    window.addEventListener('DOMContentLoaded', ()=>{
+      if (cnaeInput && cnaeInput.value.trim()){
+        sugerirAnexoPorCNAE();
+      }
+    });
   </script>
 </body>
 </html>
-
-
