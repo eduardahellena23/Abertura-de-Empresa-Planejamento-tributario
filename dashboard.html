@@ -16,6 +16,7 @@
     th{ color:#a5b4fc; font-weight:600; text-align:left }
     .kpi { font-size:1.75rem; font-weight:800 }
     .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid rgba(255,255,255,.2) }
+    a.link { color:#93c5fd; text-decoration: underline; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -111,26 +112,47 @@
   </main>
 
   <script>
+    // ===== Ambiente: GitHub Pages x Local
+    const isGithubPages = location.hostname.endsWith('github.io');
+    const formURL = isGithubPages ? 'index.html' : '/form';
+
     // ===== Helpers
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
     function safeGet(obj, path, fallback=null){
       return path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
     }
 
-    // ===== Carregar análise do localStorage (ou usar dummy)
-    const saved = localStorage.getItem('analiseTributaria');
-    const data = saved ? JSON.parse(saved) : {
-      empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00'},
-      calculo:{ base_utilizada: 800000, melhor_regime: 'Simples',
-        simples:{ imposto:120000, aliquota_fmt:'15,00%' },
-        presumido:{ imposto:150000, aliquota_fmt:'18,75%' },
-        economia_fmt: 'R$ 30.000,00'
-      },
-      atividades:{itens:[
-        {nome:'Serviços', receita_12m:500000, estimativa_proximo_ano:550000, exportacao:false},
-        {nome:'Consultoria', receita_12m:300000, estimativa_proximo_ano:320000, exportacao:true},
-      ], totais_exportacao:{receita_12m:300000, estimativa_prox_ano:320000, receita_12m_fmt:'R$ 300.000,00', estimativa_prox_ano_fmt:'R$ 320.000,00'}}
-    };
+    // ===== Carregar análise do localStorage (ou avisar e voltar)
+    let data = null;
+    try {
+      const saved = localStorage.getItem('analiseTributaria');
+      if (!saved) {
+        alert('Nenhuma análise encontrada. Volte ao formulário para gerar os dados.');
+        location.href = formURL;
+      } else {
+        data = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Não foi possível ler os dados salvos. Voltando ao formulário.');
+      location.href = formURL;
+    }
+
+    // ===== Se ainda assim não tiver data, usa dummy para não quebrar (só visual)
+    if(!data){
+      data = {
+        empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00'},
+        calculo:{ base_utilizada: 800000, melhor_regime: 'Simples',
+          simples:{ imposto:120000, aliquota_fmt:'15,00%' },
+          presumido:{ imposto:150000, aliquota_fmt:'18,75%' },
+          economia_fmt: 'R$ 30.000,00'
+        },
+        atividades:{itens:[
+          {nome:'Serviços', receita_12m:500000, estimativa_proximo_ano:550000, exportacao:false},
+          {nome:'Consultoria', receita_12m:300000, estimativa_proximo_ano:320000, exportacao:true},
+        ], totais_exportacao:{receita_12m:300000, estimativa_prox_ano:320000, receita_12m_fmt:'R$ 300.000,00', estimativa_prox_ano_fmt:'R$ 320.000,00'}}
+      };
+    }
 
     // ===== Preencher cabeçalhos
     document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
@@ -205,14 +227,16 @@
     }
 
     // ===== Ações
-    document.getElementById('btnVoltar').addEventListener('click', ()=> history.back());
-    document.getElementById('btnLimpar').addEventListener('click', ()=>{
-      localStorage.removeItem('analiseTributaria');
-      alert('Dados limpos. Volte ao formulário para gerar novamente.');
-      location.href = '/';
+    document.getElementById('btnVoltar').addEventListener('click', ()=>{
+      location.href = formURL;
     });
 
-    // Exportar CSV das atividades
+    document.getElementById('btnLimpar').addEventListener('click', ()=>{
+      localStorage.removeItem('analiseTributaria');
+      alert('Dados limpos. Voltando ao formulário.');
+      location.href = formURL;
+    });
+
     document.getElementById('btnCSV').addEventListener('click', ()=>{
       const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
       itens.forEach(it=> rows.push([
