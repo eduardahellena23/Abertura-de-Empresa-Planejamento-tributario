@@ -56,9 +56,10 @@
           </select>
         </div>
 
+        <!-- SUBSTITUIÇÃO: Faturamento Anual -> RBT12 + Mensal -->
         <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Faturamento Anual (R$)</label>
-          <input type="number" id="faturamento" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <label class="text-sm font-medium text-gray-700">Faturamento dos últimos 12 meses (RBT12) – R$</label>
+          <input type="number" id="rbt12" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420000">
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Município</label>
@@ -76,6 +77,11 @@
           <label class="text-sm font-medium text-gray-700">% do sócio na outra empresa</label>
           <input type="number" id="socio_outra_empresa_percentual" step="0.01" placeholder="0" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
+        <!-- NOVO: Faturamento anual da outra empresa -->
+        <div class="flex flex-col md:col-span-2" id="wrap_fat_outra" style="display:none;">
+          <label class="text-sm font-medium text-gray-700">Faturamento anual da outra empresa (R$)</label>
+          <input type="number" id="socio_outra_empresa_faturamento_anual" step="0.01" placeholder="Ex.: 600000" class="mt-1 p-3 border border-gray-300 rounded-md">
+        </div>
 
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">CNAE (formulário)</label>
@@ -84,6 +90,12 @@
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
           <input type="number" id="prolabore" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+        </div>
+
+        <!-- NOVO: Faturamento mensal -->
+        <div class="flex flex-col">
+          <label class="text-sm font-medium text-gray-700">Faturamento mensal – R$</label>
+          <input type="number" id="faturamento_mensal" step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35000">
         </div>
 
         <!-- Anexo (caixinha + Editar) -->
@@ -201,12 +213,17 @@
     btnPessoaFisica?.addEventListener('click', ()=>showPage('pessoaFisicaFormPage'));
     backToSplash1?.addEventListener('click', ()=>showPage('splashPage'));
 
-    // ===== Mostrar campo % se “sim” em sócio outra empresa
+    // ===== Mostrar campos de “sócio de outra empresa”
     const socioOutra = document.getElementById('socio_outra_empresa');
     const wrapPercentual = document.getElementById('wrap_percentual');
-    function togglePercentual(){ wrapPercentual.style.display = (socioOutra.value === 'sim') ? 'block' : 'none'; }
-    socioOutra.addEventListener('change', togglePercentual);
-    togglePercentual();
+    const wrapFatOutra = document.getElementById('wrap_fat_outra');
+    function toggleSocioCampos(){
+      const on = (socioOutra.value || 'nao').toLowerCase() === 'sim';
+      wrapPercentual.style.display = on ? 'block' : 'none';
+      if (wrapFatOutra) wrapFatOutra.style.display = on ? 'block' : 'none';
+    }
+    socioOutra.addEventListener('change', toggleSocioCampos);
+    toggleSocioCampos();
 
     // ===== Regime a comparar (mantido)
     const compararButtons = document.querySelectorAll('.comparar-btn');
@@ -239,21 +256,21 @@
       anexoHint.textContent = hintText || "";
     }
 
-    // ===== CNAE → sugere Anexo
-    const cnaeInput     = document.getElementById('cnae');
-    const faturamentoEl = document.getElementById('faturamento');
-    const folhaEl       = document.getElementById('folha');
+    // ===== CNAE → sugere Anexo (usa RBT12 e Folha*12)
+    const cnaeInput  = document.getElementById('cnae');
+    const rbt12El    = document.getElementById('rbt12');
+    const folhaEl    = document.getElementById('folha');
 
     async function sugerirAnexoPorCNAE(){
       const raw = (cnaeInput?.value || '').trim();
       if(!raw) return;
 
-      const rbt12  = parseFloat(faturamentoEl?.value || '0') || 0;
-      const folha  = parseFloat(folhaEl?.value || '0') || 0;
+      const rbt12   = parseFloat(rbt12El?.value || '0') || 0;
+      const folha12 = (parseFloat(folhaEl?.value || '0') || 0) * 12;
 
       try{
         statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
-        const url = `${apiUrlBase}/cnae/${encodeURIComponent(raw)}?rbt12=${rbt12}&folha12=${folha}`;
+        const url = `${apiUrlBase}/cnae/${encodeURIComponent(raw)}?rbt12=${rbt12}&folha12=${folha12}`;
         const resp = await fetch(url);
         if(!resp.ok){
           const txt = await resp.text();
@@ -277,7 +294,7 @@
     }
 
     cnaeInput && cnaeInput.addEventListener('blur', sugerirAnexoPorCNAE);
-    faturamentoEl && faturamentoEl.addEventListener('change', sugerirAnexoPorCNAE);
+    rbt12El && rbt12El.addEventListener('change', sugerirAnexoPorCNAE);
     folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
 
     // ===== Payload
@@ -286,10 +303,21 @@
         nome_empresa: document.getElementById('nome_empresa').value || '',
         cnpj: document.getElementById('cnpj').value || null,
         tipo_empresa: document.getElementById('tipo_empresa').value,
-        faturamento: parseFloat(document.getElementById('faturamento').value || '0'),
-        socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
-        cnae: document.getElementById('cnae').value || '',
         municipio: document.getElementById('municipio').value || '',
+
+        // NOVOS
+        rbt12: parseFloat(document.getElementById('rbt12').value || '0'),
+        faturamento_mensal: parseFloat(document.getElementById('faturamento_mensal')?.value || '0'),
+
+        // legado (compat no backend)
+        faturamento: 0,
+
+        // Sócio em outra empresa
+        socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
+        socio_outra_empresa_percentual: parseFloat(document.getElementById('socio_outra_empresa_percentual').value || '0'),
+        socio_outra_empresa_faturamento_anual: parseFloat(document.getElementById('socio_outra_empresa_faturamento_anual')?.value || '0'),
+
+        cnae: document.getElementById('cnae').value || '',
         prolabore: parseFloat(document.getElementById('prolabore').value || '0'),
         anexo: document.getElementById('anexo').value || '',
         comparar: document.getElementById('comparar').value || '',
