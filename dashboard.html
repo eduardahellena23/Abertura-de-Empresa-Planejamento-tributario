@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dashboard Tributário</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -36,6 +36,10 @@
     .ok   { color:#059669 }   /* Emerald-600 */
     .warn { color:#b45309 }   /* Amber-700 */
     tfoot td { font-weight:700; }
+    .callout {
+      background:#fff; border:1px dashed rgba(18,54,100,.25);
+      padding:14px; border-radius:12px; color:#334155;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -45,6 +49,13 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 space-y-6">
+
+    <!-- Avisos -->
+    <section id="msgBox" class="hidden">
+      <div class="callout">
+        <div id="msgText" class="text-sm"></div>
+      </div>
+    </section>
 
     <!-- Identificação -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -219,30 +230,37 @@
     /* ===== Helpers ===== */
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
     const pctFmt = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
-    const pctItem = v => {
+    function pctItem(v){
       if (v === null || v === undefined) return '—';
       const s = String(v).trim();
       if (s === '' || s.toUpperCase() === 'NA') return 'NA';
       const clean = s.replace('%','').replace(',','.');
       const num = Number(clean);
       return isNaN(num) ? s : pctFmt(num);
-    };
+    }
     const safeGet = (obj, path, fallback=null) =>
       path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
 
-    /* ===== Carregar análise do localStorage ===== */
+    const $ = id => document.getElementById(id);
+    function showMsg(text){
+      $('msgText').textContent = text;
+      $('msgBox').classList.remove('hidden');
+    }
+
+    /* ===== Carregar análise ===== */
     let data = null;
     try {
       const saved = localStorage.getItem('analiseTributaria');
-      if (!saved) { alert('Nenhuma análise encontrada. Volte ao formulário para gerar os dados.'); location.href = formURL; }
-      else { data = JSON.parse(saved); }
-    } catch (e) {
-      console.error(e);
-      alert('Não foi possível ler os dados salvos. Voltando ao formulário.');
-      location.href = formURL;
+      if (saved) data = JSON.parse(saved);
+    } catch(e){
+      console.error('Falha ao ler analiseTributaria:', e);
     }
 
-    /* ===== Dummy (fallback visual) ===== */
+    if(!data){
+      showMsg('Nenhuma análise encontrada nesta origem. Gere os dados pelo formulário e tente novamente.');
+    }
+
+    /* ===== Se ainda não houver dados, cria um dummy para validar a UI (opcional) ===== */
     if(!data){
       data = {
         empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00',
@@ -270,39 +288,39 @@
     }
 
     /* ===== Cabeçalhos ===== */
-    document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
-    document.getElementById('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
-    document.getElementById('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
-    document.getElementById('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
-    document.getElementById('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
+    $('empresaNome').textContent = safeGet(data,'empresa.nome','-');
+    $('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
+    $('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
+    $('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
+    $('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
     const regAtual = safeGet(data,'empresa.regime_atual', null);
-    if(regAtual) document.getElementById('regimeAtual').textContent = 'Regime atual: ' + regAtual;
+    if(regAtual) $('regimeAtual').textContent = 'Regime atual: ' + regAtual;
     const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
-    document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
+    $('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
     /* ===== Outra empresa ===== */
     const outra = safeGet(data, 'empresa.outra_empresa', null);
     if (outra && typeof outra === 'object') {
-      document.getElementById('outraEmpresaSec').style.display = 'grid';
-      document.getElementById('ehSocio').textContent = outra.eh_socio ? 'Sim' : 'Não';
-      document.getElementById('pctSocio').textContent = outra.percentual_participacao != null ? pctFmt(outra.percentual_participacao) : '—';
-      document.getElementById('fatOutra').textContent = outra.faturamento_anual != null ? brl(outra.faturamento_anual) : '—';
+      $('outraEmpresaSec').style.display = 'grid';
+      $('ehSocio').textContent = outra.eh_socio ? 'Sim' : 'Não';
+      $('pctSocio').textContent = outra.percentual_participacao != null ? pctFmt(outra.percentual_participacao) : '—';
+      $('fatOutra').textContent = outra.faturamento_anual != null ? brl(outra.faturamento_anual) : '—';
     }
 
     /* ===== KPIs ===== */
     const base = Number(safeGet(data,'calculo.base_utilizada',0)) || 0;
     const mediaMensal = base / 12.0;
 
-    document.getElementById('kpiBase').textContent  = brl(base);
-    document.getElementById('kpiMediaMensal').textContent = brl(mediaMensal);
-    document.getElementById('kpiAliqS').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
-    document.getElementById('kpiAliqP').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
-    document.getElementById('kpiMelhor').textContent= safeGet(data,'calculo.melhor_regime','—');
-    document.getElementById('kpiEconomia').textContent = 'Economia estimada: ' + safeGet(data,'calculo.economia_fmt','—');
+    $('kpiBase').textContent  = brl(base);
+    $('kpiMediaMensal').textContent = brl(mediaMensal);
+    $('kpiAliqS').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
+    $('kpiAliqP').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
+    $('kpiMelhor').textContent= safeGet(data,'calculo.melhor_regime','—');
+    $('kpiEconomia').textContent = 'Economia estimada: ' + safeGet(data,'calculo.economia_fmt','—');
 
     const fatorRFlag = safeGet(data, 'calculo.inputs_normalizados.fator_r_efetivo', null);
     if (fatorRFlag !== null) {
-      document.getElementById('kpiFatorR').innerHTML = fatorRFlag
+      $('kpiFatorR').innerHTML = fatorRFlag
         ? '<span class="ok">Fator R ≥ 28% (encaixa em Anexo III)</span>'
         : '<span class="warn">Fator R &lt; 28% (encaixa em Anexo V)</span>';
     }
@@ -311,46 +329,44 @@
     const vS = Number(safeGet(data,'calculo.simples.imposto',0)) || 0;
     const vP = Number(safeGet(data,'calculo.presumido.imposto',0)) || 0;
 
-    const ctxBar = document.getElementById('chartBarras').getContext('2d');
-    new Chart(ctxBar, {
-      type: 'bar',
-      data: {
-        labels: ['Simples', 'Presumido'],
-        datasets: [{
-          label: 'Impostos (R$)',
-          data: [vS, vP],
-          backgroundColor: ['#06b6d4','#fb7185'],  /* cyan & rose */
-          borderColor: ['#0891b2','#f43f5e'],
-          borderWidth: 1,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
-        scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
-      }
-    });
+    try {
+      const ctxBar = document.getElementById('chartBarras').getContext('2d');
+      new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: ['Simples', 'Presumido'],
+          datasets: [{
+            label: 'Impostos (R$)',
+            data: [vS, vP],
+            backgroundColor: ['#06b6d4','#fb7185'],  /* cyan & rose */
+            borderColor: ['#0891b2','#f43f5e'],
+            borderWidth: 1,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
+          scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
+        }
+      });
 
-    const ctxPie = document.getElementById('chartPizza').getContext('2d');
-    new Chart(ctxPie, {
-      type: 'doughnut',
-      data: {
-        labels: ['Simples','Presumido'],
-        datasets: [{ data:[vS,vP], backgroundColor:['#06b6d4','#fb7185'], borderColor:['#0891b2','#f43f5e'] }]
-      },
-      options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
-    });
+      const ctxPie = document.getElementById('chartPizza').getContext('2d');
+      new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: ['Simples','Presumido'],
+          datasets: [{ data:[vS,vP], backgroundColor:['#06b6d4','#fb7185'], borderColor:['#0891b2','#f43f5e'] }]
+        },
+        options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
+      });
+    } catch(e){
+      console.warn('Falha ao renderizar gráficos:', e);
+    }
 
     /* ===== Detalhamento por regime ===== */
-      if (v === null || v === undefined) return '—';
-      const s = String(v).trim();
-      if (s === '' || s.toUpperCase() === 'NA') return 'NA';
-      const clean = s.replace('%','').replace(',','.');
-      const num = Number(clean);
-      return isNaN(num) ? s : pctFmt(num);
-    };
-    const fillItens = (tbodyId, itens) => {
-      const tb = document.getElementById(tbodyId);
+    function fillItens(tbodyId, itens) {
+      const tb = $(tbodyId);
+      if (!tb) return;
       tb.innerHTML = '';
       (itens||[]).forEach(it=>{
         const tr = document.createElement('tr');
@@ -361,20 +377,18 @@
         `;
         tb.appendChild(tr);
       });
-    };
+    }
 
-    // Simples
-    document.getElementById('simplesAliqEff').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
+    $('simplesAliqEff').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
     fillItens('tbSimples', safeGet(data,'calculo.simples.itens', []));
-    document.getElementById('totSimples').textContent = brl(vS);
+    $('totSimples').textContent = brl(vS);
 
-    // Presumido
-    document.getElementById('presumidoAliqEff').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
+    $('presumidoAliqEff').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
     fillItens('tbPresumido', safeGet(data,'calculo.presumido.itens', []));
-    document.getElementById('totPresumido').textContent = brl(vP);
+    $('totPresumido').textContent = brl(vP);
 
     /* ===== Tabela de atividades ===== */
-    const tbAtv = document.getElementById('tbodyAtividades');
+    const tbAtv = $('tbodyAtividades');
     const itensAtv = safeGet(data,'atividades.itens',[]) || [];
     tbAtv.innerHTML = '';
     itensAtv.forEach(it=>{
@@ -388,14 +402,18 @@
     });
     const tot = safeGet(data,'atividades.totais_exportacao',null);
     if(tot){
-      document.getElementById('totaisExport').innerHTML =
+      $('totaisExport').innerHTML =
         `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
     }
 
     /* ===== Ações ===== */
-    document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = formURL; });
-    document.getElementById('btnLimpar').addEventListener('click', ()=>{ localStorage.removeItem('analiseTributaria'); alert('Dados limpos. Voltando ao formulário.'); location.href = formURL; });
-    document.getElementById('btnCSV').addEventListener('click', ()=>{
+    $('btnVoltar').addEventListener('click', ()=>{ location.href = formURL; });
+    $('btnLimpar').addEventListener('click', ()=>{
+      localStorage.removeItem('analiseTributaria');
+      alert('Dados limpos. Voltando ao formulário.');
+      location.href = formURL;
+    });
+    $('btnCSV').addEventListener('click', ()=>{
       const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
       itensAtv.forEach(it=> rows.push([ it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não' ]));
       const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -405,4 +423,3 @@
   </script>
 </body>
 </html>
-
