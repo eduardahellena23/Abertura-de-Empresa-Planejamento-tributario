@@ -19,6 +19,7 @@
     a.link { color:#93c5fd; text-decoration: underline; }
     .ok   { color:#86efac }
     .warn { color:#fde68a }
+    tfoot td { font-weight:700; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -51,7 +52,7 @@
       </div>
     </section>
 
-    <!-- Sócio em outra empresa (aparece só se existir no retorno) -->
+    <!-- Sócio em outra empresa -->
     <section id="outraEmpresaSec" class="grid grid-cols-1 md:grid-cols-3 gap-4" style="display:none;">
       <div class="card md:col-span-3">
         <div class="muted text-xs">Participação em outra empresa</div>
@@ -110,6 +111,61 @@
       </div>
     </section>
 
+    <!-- NOVO: Detalhamento dos Impostos por Regime -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Simples -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-lg font-semibold title">Simples Nacional — Detalhamento</h2>
+          <div class="text-sm muted">Alíquota efetiva: <span id="simplesAliqEff" class="font-semibold"></span></div>
+        </div>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Tributo</th>
+                <th>Alíquota</th>
+                <th>Valor (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="tbSimples"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2">Total (Simples)</td>
+                <td id="totSimples"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Presumido -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-lg font-semibold title">Lucro Presumido — Detalhamento</h2>
+          <div class="text-sm muted">Alíquota efetiva: <span id="presumidoAliqEff" class="font-semibold"></span></div>
+        </div>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Tributo</th>
+                <th>Alíquota</th>
+                <th>Valor (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="tbPresumido"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2">Total (Presumido)</td>
+                <td id="totPresumido"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- Tabela atividades -->
     <section class="card">
       <div class="muted text-sm mb-3">Separação por atividade</div>
@@ -146,7 +202,16 @@
 
     // ===== Helpers
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
-    const pct = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
+    const pctFmt = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
+    const pctItem = v => {
+      if (v === null || v === undefined) return '—';
+      const s = String(v).trim();
+      if (s === '' || s.toUpperCase() === 'NA') return 'NA';
+      // pode vir com % ou com vírgula
+      const clean = s.replace('%','').replace(',','.');
+      const num = Number(clean);
+      return isNaN(num) ? s : pctFmt(num);
+    };
     function safeGet(obj, path, fallback=null){
       return path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
     }
@@ -170,19 +235,27 @@
     // ===== Dummy (fallback visual)
     if(!data){
       data = {
-        empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00'},
+        empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00',
+          outra_empresa:{ eh_socio:true, percentual_participacao:25, faturamento_anual:600000 }},
         calculo:{ base_utilizada: 800000, melhor_regime: 'Simples',
-          simples:{ imposto:120000, aliquota_fmt:'15,00%' },
-          presumido:{ imposto:150000, aliquota_fmt:'18,75%' },
+          simples:{ imposto:120000, aliquota_fmt:'15,00%', itens:[
+            { tributo:'IRPJ', aliquota_pct:'4.80', valor: 38400 },
+            { tributo:'CSLL', aliquota_pct:'2.88', valor: 23040 },
+            { tributo:'PIS/COFINS/ISS', aliquota_pct:'7.32', valor: 58560 },
+          ]},
+          presumido:{ imposto:150000, aliquota_fmt:'18,75%', itens:[
+            { tributo:'IRPJ', aliquota_pct:'8.00', valor: 64000 },
+            { tributo:'CSLL', aliquota_pct:'3.70', valor: 29600 },
+            { tributo:'PIS', aliquota_pct:'0.65', valor: 5200 },
+            { tributo:'COFINS', aliquota_pct:'3.00', valor: 24000 },
+            { tributo:'ISS', aliquota_pct:'3.00', valor: 24000 },
+          ]},
           economia_fmt: 'R$ 30.000,00'
         },
         atividades:{itens:[
           {nome:'Serviços', receita_12m:500000, estimativa_proximo_ano:550000, exportacao:false},
           {nome:'Consultoria', receita_12m:300000, estimativa_proximo_ano:320000, exportacao:true},
-        ], totais_exportacao:{receita_12m:300000, estimativa_prox_ano:320000, receita_12m_fmt:'R$ 300.000,00', estimativa_prox_ano_fmt:'R$ 320.000,00'}},
-        empresa:{ nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00',
-          outra_empresa:{ eh_socio:true, percentual_participacao:25, faturamento_anual:600000 }
-        }
+        ], totais_exportacao:{receita_12m:300000, estimativa_prox_ano:320000, receita_12m_fmt:'R$ 300.000,00', estimativa_prox_ano_fmt:'R$ 320.000,00'}}
       };
     }
 
@@ -202,7 +275,7 @@
     if (outra && typeof outra === 'object') {
       document.getElementById('outraEmpresaSec').style.display = 'grid';
       document.getElementById('ehSocio').textContent = outra.eh_socio ? 'Sim' : 'Não';
-      document.getElementById('pctSocio').textContent = outra.percentual_participacao != null ? pct(outra.percentual_participacao) : '—';
+      document.getElementById('pctSocio').textContent = outra.percentual_participacao != null ? pctFmt(outra.percentual_participacao) : '—';
       document.getElementById('fatOutra').textContent = outra.faturamento_anual != null ? brl(outra.faturamento_anual) : '—';
     }
 
@@ -259,18 +332,43 @@
       options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
     });
 
+    // ===== NOVO: Detalhamento por regime
+    function fillItens(tbodyId, itens) {
+      const tb = document.getElementById(tbodyId);
+      tb.innerHTML = '';
+      (itens||[]).forEach(it=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${it.tributo || '-'}</td>
+          <td>${pctItem(it.aliquota_pct)}</td>
+          <td>${brl(it.valor || 0)}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    // Simples
+    document.getElementById('simplesAliqEff').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
+    fillItens('tbSimples', safeGet(data,'calculo.simples.itens', []));
+    document.getElementById('totSimples').textContent = brl(vS);
+
+    // Presumido
+    document.getElementById('presumidoAliqEff').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
+    fillItens('tbPresumido', safeGet(data,'calculo.presumido.itens', []));
+    document.getElementById('totPresumido').textContent = brl(vP);
+
     // ===== Tabela de atividades
-    const tb = document.getElementById('tbodyAtividades');
-    const itens = safeGet(data,'atividades.itens',[]) || [];
-    tb.innerHTML = '';
-    itens.forEach(it=>{
+    const tbAtv = document.getElementById('tbodyAtividades');
+    const itensAtv = safeGet(data,'atividades.itens',[]) || [];
+    tbAtv.innerHTML = '';
+    itensAtv.forEach(it=>{
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${it.nome||'-'}</td>
         <td>${brl(it.receita_12m||0)}</td>
         <td>${brl(it.estimativa_proximo_ano||0)}</td>
         <td>${it.exportacao ? 'Sim':'Não'}</td>`;
-      tb.appendChild(tr);
+      tbAtv.appendChild(tr);
     });
     const tot = safeGet(data,'atividades.totais_exportacao',null);
     if(tot){
@@ -279,32 +377,14 @@
     }
 
     // ===== Ações
-    document.getElementById('btnVoltar').addEventListener('click', ()=>{
-      location.href = formURL;
-    });
-
-    document.getElementById('btnLimpar').addEventListener('click', ()=>{
-      localStorage.removeItem('analiseTributaria');
-      alert('Dados limpos. Voltando ao formulário.');
-      location.href = formURL;
-    });
-
+    document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = formURL; });
+    document.getElementById('btnLimpar').addEventListener('click', ()=>{ localStorage.removeItem('analiseTributaria'); alert('Dados limpos. Voltando ao formulário.'); location.href = formURL; });
     document.getElementById('btnCSV').addEventListener('click', ()=>{
       const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
-      itens.forEach(it=> rows.push([
-        it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não'
-      ]));
-      const csv = rows.map(r=> r.map(v=>{
-        const s = String(v).replace(/"/g,'""');
-        return `"${s}"`;
-      }).join(',')).join('\n');
-
+      itensAtv.forEach(it=> rows.push([ it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não' ]));
+      const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
       const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'atividades.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'atividades.csv'; a.click(); URL.revokeObjectURL(a.href);
     });
   </script>
 </body>
