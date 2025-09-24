@@ -242,7 +242,7 @@
       });
     }
 
-    // ===== Renderização
+    // ===== Tabela
     function renderTable(tbodyId, itens){
       const tb = document.getElementById(tbodyId);
       tb.innerHTML = '';
@@ -256,16 +256,30 @@
       });
     }
 
+    // ===== Render principal (corrigido base)
     function render(){
       paintToggle();
 
-      // Escolhe bloco conforme período (ou modo legado)
       let bloco = null, base = 0, labelPeriodo='—', mesesInfo='';
-      if(hasNew){
+      if (hasNew) {
         bloco = data.calculos[periodo];
-        base  = (periodo==='mensal' ? safeGet(data,'bases.mensal',0) : safeGet(data,'bases.anual',0));
-        labelPeriodo = (periodo==='mensal' ? 'Mensal' : 'Anual');
-        mesesInfo = `(${bloco?.periodo_meses || (periodo==='mensal'?1:12)} meses)`;
+
+        // Preferir a base usada pelo back no próprio bloco
+        const baseFromBloco = safeGet(bloco, 'base_utilizada', null);
+
+        // Fallbacks
+        const fallbackMensal = safeGet(data, 'bases.mensal', 0);
+        const fallbackAnual  = safeGet(data, 'bases.anual',  0);
+        const legacyBase     = safeGet(data, 'calculo.base_utilizada', 0);
+
+        base = (baseFromBloco != null)
+                ? baseFromBloco
+                : (periodo === 'mensal'
+                      ? (fallbackMensal || (legacyBase ? legacyBase/12 : 0))
+                      : (fallbackAnual  || legacyBase));
+
+        labelPeriodo = (periodo === 'mensal' ? 'Mensal' : 'Anual');
+        mesesInfo = `(${bloco?.periodo_meses || (periodo==='mensal' ? 1 : 12)} meses)`;
       } else {
         // legacy
         bloco = data.calculo;
@@ -276,8 +290,8 @@
 
       // KPIs
       document.getElementById('kpiPeriodo').textContent = labelPeriodo;
-      document.getElementById('kpiMeses').textContent = mesesInfo;
-      document.getElementById('kpiBase').textContent  = brl(base);
+      document.getElementById('kpiMeses').textContent   = mesesInfo;
+      document.getElementById('kpiBase').textContent    = brl(base);
 
       const aliqS = bloco?.simples?.aliquota_fmt || (bloco?.simples?.aliquota_num!=null ? pct(100*bloco.simples.aliquota_num) : '—');
       const aliqP = bloco?.presumido?.aliquota_fmt || (bloco?.presumido?.aliquota_num!=null ? pct(100*bloco.presumido.aliquota_num) : '—');
@@ -337,7 +351,6 @@
     });
 
     // ===== Boot
-    paintToggle();
     render();
   </script>
 </body>
