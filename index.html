@@ -10,6 +10,7 @@
     body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1a202c; }
     .page { display: none; }
     .page-container { z-index: 10; }
+    .compact-hint{ font-size: .75rem; color:#6b7280; margin-top:.25rem }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -56,10 +57,10 @@
           </select>
         </div>
 
-        <!-- SUBSTITUIÇÃO: Faturamento Anual -> RBT12 + Mensal -->
+        <!-- RBT12 + Município -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Faturamento dos últimos 12 meses (RBT12) – R$</label>
-          <input type="number" id="rbt12" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420000">
+          <input type="text" id="rbt12" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420000" data-compact-preview data-money-mask>
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Município</label>
@@ -75,12 +76,12 @@
         </div>
         <div class="flex flex-col" id="wrap_percentual" style="display:none;">
           <label class="text-sm font-medium text-gray-700">% do sócio na outra empresa</label>
-          <input type="number" id="socio_outra_empresa_percentual" step="0.01" placeholder="0" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="socio_outra_empresa_percentual" inputmode="decimal" placeholder="0" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
         </div>
-        <!-- NOVO: Faturamento anual da outra empresa -->
+        <!-- Faturamento anual da outra -->
         <div class="flex flex-col md:col-span-2" id="wrap_fat_outra" style="display:none;">
           <label class="text-sm font-medium text-gray-700">Faturamento anual da outra empresa (R$)</label>
-          <input type="number" id="socio_outra_empresa_faturamento_anual" step="0.01" placeholder="Ex.: 600000" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="socio_outra_empresa_faturamento_anual" inputmode="decimal" placeholder="Ex.: 600000" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
         </div>
 
         <div class="flex flex-col">
@@ -89,16 +90,16 @@
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
-          <input type="number" id="prolabore" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="prolabore" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
         </div>
 
-        <!-- NOVO: Faturamento mensal -->
+        <!-- Faturamento mensal -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Faturamento mensal – R$</label>
-          <input type="number" id="faturamento_mensal" step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35000">
+          <input type="text" id="faturamento_mensal" inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35000" data-compact-preview data-money-mask>
         </div>
 
-        <!-- Anexo (caixinha + Editar) -->
+        <!-- Anexo -->
         <div class="flex flex-col md:col-span-2">
           <label class="text-sm font-medium text-gray-700 mb-2">Anexo Simples Nacional</label>
           <div class="flex items-center gap-2">
@@ -131,7 +132,7 @@
 
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore Ideal (R$)</label>
-          <input type="number" id="prolabore_ideal" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="prolabore_ideal" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">ICMS (%)</label>
@@ -147,10 +148,10 @@
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Valor da Folha (R$)</label>
-          <input type="number" id="folha" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="folha" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
         </div>
 
-        <!-- Campos de empresa constituída (se você tiver, pode manter aqui) -->
+        <!-- Extras empresa constituída -->
         <div id="constitFields" class="md:col-span-2 p-4 rounded-lg border border-indigo-200 bg-indigo-50" style="display:none;">
           <!-- seus campos extras aqui -->
         </div>
@@ -192,8 +193,8 @@
 
   <!-- Scripts (DEIXE NO FINAL) -->
   <script>
-    // ===== CONFIG: sua API (troque pelo seu ngrok em produção)
-    const apiUrlBase = "http://127.0.0.1:8000"; // ex.: "https://SEU-ID.ngrok-free.app"
+    // ===== CONFIG: sua API
+    const apiUrlBase = "http://127.0.0.1:8000";
 
     // ===== Navegação básica
     const splashPage = document.getElementById('splashPage');
@@ -225,7 +226,7 @@
     socioOutra.addEventListener('change', toggleSocioCampos);
     toggleSocioCampos();
 
-    // ===== Regime a comparar (mantido)
+    // ===== Regime a comparar
     const compararButtons = document.querySelectorAll('.comparar-btn');
     const compararInput = document.getElementById('comparar');
     function setCompararActive(btn) {
@@ -265,8 +266,8 @@
       const raw = (cnaeInput?.value || '').trim();
       if(!raw) return;
 
-      const rbt12   = parseFloat(rbt12El?.value || '0') || 0;
-      const folha12 = (parseFloat(folhaEl?.value || '0') || 0) * 12;
+      const rbt12   = parseBR(rbt12El?.value || '0');
+      const folha12 = parseBR(folhaEl?.value || '0') * 12;
 
       try{
         statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
@@ -282,7 +283,6 @@
         const dica = `CNAE ${json.cnae}: ${json.descricao} • Possíveis: ${possiveis}${json.fator_r ? ' (Fator R)' : ''}. Sugerido: ${json.sugestao_anexo}.`;
         setAnexoValue(json.sugestao_anexo, dica);
 
-        // trava edição após sugerir
         anexoSelect.disabled = true;
         statusMessage.textContent = 'Anexo sugerido automaticamente pelo CNAE.';
       }catch(e){
@@ -297,6 +297,80 @@
     rbt12El && rbt12El.addEventListener('change', sugerirAnexoPorCNAE);
     folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
 
+    // ===== Preview compacto (≈ 5M)
+    const nfCompactPT = new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 2 });
+    function formatCompactBR(n){
+      if (!isFinite(n) || n === 0) return '';
+      return nfCompactPT.format(n)
+        .replace(/\s*mil\b/i, 'K')
+        .replace(/\s*mi\b/i, 'M')
+        .replace(/\s*bi\b/i, 'B')
+        .replace(/\s*tri\b/i, 'T');
+    }
+
+    // ===== Máscara BR de dinheiro (ponto milhar, vírgula decimal)
+    function maskMoney(value) {
+      if (value == null) return '';
+      // remove tudo que não é dígito ou vírgula
+      let s = String(value).replace(/[^\d,]/g, '');
+      // se tiver mais de uma vírgula, mantém só a primeira
+      const parts = s.split(',');
+      let intPart = parts[0].replace(/^0+(?=\d)/, ''); // remove zeros à esquerda
+      let decPart = parts[1] ? parts[1].slice(0, 2) : '';
+      // formata milhares com ponto
+      intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return decPart ? `${intPart},${decPart}` : intPart;
+    }
+    function parseBR(s){
+      if (!s) return 0;
+      const num = parseFloat(String(s).replace(/\./g,'').replace(',','.'));
+      return isNaN(num) ? 0 : num;
+    }
+    function attachMoneyMask(input){
+      // teclado numérico no mobile já está setado por inputmode="decimal"
+      const update = ()=>{
+        const caret = input.selectionStart;
+        const before = input.value;
+        input.value = maskMoney(before);
+        // ajuste simples do caret (não perfeito, mas evita pular para o fim em edições curtas)
+        const diff = input.value.length - before.length;
+        if (document.activeElement === input && typeof caret === 'number') {
+          input.setSelectionRange(Math.max(0, caret + diff), Math.max(0, caret + diff));
+        }
+        // atualiza hint compacto se existir
+        const hint = input.nextElementSibling;
+        if (hint && hint.classList.contains('compact-hint')) {
+          const n = parseBR(input.value);
+          hint.textContent = n ? `≈ ${formatCompactBR(n)}` : '';
+        }
+      };
+      input.addEventListener('input', update);
+      input.addEventListener('change', update);
+      // formata valor inicial (se vier pré-preenchido)
+      update();
+    }
+
+    // inicializa máscaras/preview nos inputs marcados
+    document.querySelectorAll('input[data-money-mask]').forEach(attachMoneyMask);
+
+    // ===== Preview compacto (usa parseBR agora)
+    function attachCompactPreview(input){
+      let hint = input.nextElementSibling;
+      if (!hint || !hint.classList.contains('compact-hint')) {
+        hint = document.createElement('div');
+        hint.className = 'compact-hint';
+        input.insertAdjacentElement('afterend', hint);
+      }
+      const update = ()=>{
+        const n = parseBR(input.value || '0');
+        hint.textContent = n ? `≈ ${formatCompactBR(n)}` : '';
+      };
+      input.addEventListener('input', update);
+      input.addEventListener('change', update);
+      update();
+    }
+    document.querySelectorAll('input[data-compact-preview]').forEach(attachCompactPreview);
+
     // ===== Payload
     function montarPayload(){
       return {
@@ -305,25 +379,22 @@
         tipo_empresa: document.getElementById('tipo_empresa').value,
         municipio: document.getElementById('municipio').value || '',
 
-        // NOVOS
-        rbt12: parseFloat(document.getElementById('rbt12').value || '0'),
-        faturamento_mensal: parseFloat(document.getElementById('faturamento_mensal')?.value || '0'),
+        rbt12: parseBR(document.getElementById('rbt12').value),
+        faturamento_mensal: parseBR(document.getElementById('faturamento_mensal')?.value),
 
-        // legado (compat no backend)
         faturamento: 0,
 
-        // Sócio em outra empresa
         socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
-        socio_outra_empresa_percentual: parseFloat(document.getElementById('socio_outra_empresa_percentual').value || '0'),
-        socio_outra_empresa_faturamento_anual: parseFloat(document.getElementById('socio_outra_empresa_faturamento_anual')?.value || '0'),
+        socio_outra_empresa_percentual: parseBR(document.getElementById('socio_outra_empresa_percentual').value),
+        socio_outra_empresa_faturamento_anual: parseBR(document.getElementById('socio_outra_empresa_faturamento_anual')?.value),
 
         cnae: document.getElementById('cnae').value || '',
-        prolabore: parseFloat(document.getElementById('prolabore').value || '0'),
+        prolabore: parseBR(document.getElementById('prolabore').value),
         anexo: document.getElementById('anexo').value || '',
         comparar: document.getElementById('comparar').value || '',
-        prolabore_ideal: parseFloat(document.getElementById('prolabore_ideal').value || '0'),
+        prolabore_ideal: parseBR(document.getElementById('prolabore_ideal').value),
         tem_funcionarios: document.getElementById('tem_funcionarios').value,
-        folha: parseFloat(document.getElementById('folha').value || '0'),
+        folha: parseBR(document.getElementById('folha').value),
         icms: parseFloat(document.getElementById('icms').value || '0'),
         empresa_constituida: (document.getElementById('tipo_empresa').value === 'constituida'),
       };
@@ -353,8 +424,6 @@
         }
         const json = await resp.json();
         localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        // Se seu dashboard está no GitHub Pages, use "dashboard.html".
-        // Se preferir usar o da API, troque por: window.location.href = `${apiUrlBase}/dashboard`;
         window.location.href = "dashboard.html";
       }catch(e){
         statusMessage.textContent = `Erro de rede: ${e.message}`;
