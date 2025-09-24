@@ -7,25 +7,35 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Tema claro */
-    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f5f7fb; color:#111827; }
-    .card { background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.04) }
-    .muted { color:#6b7280; }
-    .title { color:#1f2937; }
+    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f3f6fb; color:#0f172a; }
+    .card { background:#fff; border:1px solid rgba(2,6,23,0.07); border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(2,6,23,0.06); }
+    .muted { color:#64748b; }
+    .title { color:#1d4ed8; }
     table { width:100%; border-collapse: collapse; }
-    th,td{ padding:10px; border-bottom:1px solid #eef2f7 }
-    th{ color:#374151; font-weight:600; text-align:left; background:#f3f4f6 }
-    .kpi { font-size:1.75rem; font-weight:800; color:#111827 }
-    .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid #e5e7eb; background:#f9fafb; color:#374151 }
-    a.link { color:#2563eb; text-decoration: underline; }
-    .ok   { color:#059669 }
-    .warn { color:#d97706 }
+    th,td{ padding:10px; border-bottom:1px solid rgba(2,6,23,0.06) }
+    th{ color:#334155; font-weight:600; text-align:left; background:#f8fafc }
+    .kpi { font-size:1.5rem; font-weight:800 }
+    .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid rgba(2,6,23,.12); background:#f8fafc }
+    a.link { color:#1d4ed8; text-decoration: underline; }
+    .ok   { color:#16a34a }
+    .warn { color:#b45309 }
+    .toggle .on { background:#1d4ed8; color:#fff; }
   </style>
 </head>
 <body class="min-h-screen">
   <header class="max-w-6xl mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold title">📊 Dashboard Tributário</h1>
-    <p class="muted text-sm">Visualização interativa do comparativo Simples x Presumido</p>
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold title">📊 Dashboard Tributário</h1>
+        <p class="muted text-sm">Comparativo Simples Nacional × Lucro Presumido</p>
+      </div>
+
+      <!-- Toggle Mensal/Anual -->
+      <div class="card toggle flex items-center gap-2">
+        <button id="btnMensal" class="px-3 py-1 rounded-md">Mensal</button>
+        <button id="btnAnual" class="px-3 py-1 rounded-md">Anual</button>
+      </div>
+    </div>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 space-y-6">
@@ -52,36 +62,16 @@
       </div>
     </section>
 
-    <!-- Sócio em outra empresa -->
-    <section id="outraEmpresaSec" class="grid grid-cols-1 md:grid-cols-3 gap-4" style="display:none;">
-      <div class="card md:col-span-3">
-        <div class="muted text-xs">Participação em outra empresa</div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-1">
-          <div>
-            <div class="muted text-xs">É sócio?</div>
-            <div id="ehSocio" class="text-lg font-semibold"></div>
-          </div>
-          <div>
-            <div class="muted text-xs">Percentual de participação</div>
-            <div id="pctSocio" class="text-lg font-semibold"></div>
-          </div>
-          <div>
-            <div class="muted text-xs">Faturamento anual da outra</div>
-            <div id="fatOutra" class="text-lg font-semibold"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- KPIs -->
     <section class="grid grid-cols-1 md:grid-cols-5 gap-4">
       <div class="card">
-        <div class="muted text-xs">Base de cálculo (RBT12)</div>
-        <div id="kpiBase" class="kpi"></div>
+        <div class="muted text-xs">Período selecionado</div>
+        <div id="kpiPeriodo" class="kpi"></div>
+        <div id="kpiMeses" class="muted text-xs"></div>
       </div>
       <div class="card">
-        <div class="muted text-xs">Média mensal (derivada)</div>
-        <div id="kpiMediaMensal" class="kpi"></div>
+        <div class="muted text-xs">Base de cálculo</div>
+        <div id="kpiBase" class="kpi"></div>
       </div>
       <div class="card">
         <div class="muted text-xs">Alíquota efetiva — Simples</div>
@@ -95,52 +85,6 @@
         <div class="muted text-xs">Regime mais vantajoso</div>
         <div id="kpiMelhor" class="kpi"></div>
         <div id="kpiEconomia" class="muted text-xs"></div>
-        <div id="kpiFatorR" class="muted text-xs mt-1"></div>
-      </div>
-    </section>
-
-    <!-- Impostos calculados (abas) -->
-    <section class="card">
-      <div class="flex items-center justify-between mb-3">
-        <div class="muted text-sm">Impostos calculados por regime</div>
-        <div class="flex gap-2">
-          <button id="tabSimples"   data-tab="simples"
-                  class="px-3 py-1 rounded-md border border-gray-200 bg-white text-gray-800 hover:bg-gray-50">
-            Simples Nacional
-          </button>
-          <button id="tabPresumido" data-tab="presumido"
-                  class="px-3 py-1 rounded-md border border-gray-200 bg-white text-gray-800 hover:bg-gray-50">
-            Lucro Presumido
-          </button>
-        </div>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table>
-          <thead>
-            <tr>
-              <th>Tributo</th>
-              <th>Alíquota (%)</th>
-              <th>Valor (R$)</th>
-              <th>Obs.</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyImpostos"></tbody>
-          <tfoot>
-            <tr>
-              <td class="font-semibold">Total</td>
-              <td></td>
-              <td id="totalImpostos" class="font-semibold"></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td class="font-semibold">Alíquota efetiva</td>
-              <td id="aliqEfetiva" class="font-semibold"></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
       </div>
     </section>
 
@@ -153,6 +97,47 @@
       <div class="card">
         <div class="muted text-sm mb-2">Participação relativa</div>
         <canvas id="chartPizza" height="280"></canvas>
+      </div>
+    </section>
+
+    <!-- Tabelas detalhadas por regime -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="card">
+        <div class="flex items-center justify-between mb-2">
+          <div class="muted text-sm">Detalhamento — <b>Simples Nacional</b></div>
+          <div class="muted text-xs" id="sumS"></div>
+        </div>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Tributo</th>
+                <th>Alíquota</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tbodySimples"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex items-center justify-between mb-2">
+          <div class="muted text-sm">Detalhamento — <b>Lucro Presumido</b></div>
+          <div class="muted text-xs" id="sumP"></div>
+        </div>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Tributo</th>
+                <th>Alíquota</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyPresumido"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -179,39 +164,35 @@
 
     <!-- Ações -->
     <section class="flex flex-col md:flex-row gap-3 pb-10">
-      <button id="btnVoltar" class="px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50">← Voltar ao formulário</button>
-      <button id="btnLimpar" class="px-4 py-2 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100">Limpar dados salvos</button>
+      <button id="btnVoltar" class="px-4 py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">← Voltar ao formulário</button>
+      <button id="btnLimpar" class="px-4 py-2 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100">Limpar dados salvos</button>
       <button id="btnCSV" class="px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100">Exportar atividades (CSV)</button>
     </section>
   </main>
 
   <script>
-    const isGithubPages = location.hostname.endsWith('github.io');
-    const formURL = isGithubPages ? 'index.html' : '/form';
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
     const pct = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
-    function safeGet(obj, path, fallback=null){
-      return path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
-    }
+    const safeGet = (obj, path, fallback=null)=> path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
 
-    // ===== Carregar análise
+    // ===== Carrega dados
     let data = null;
-    try {
-      const saved = localStorage.getItem('analiseTributaria');
-      if (!saved) {
-        alert('Nenhuma análise encontrada. Volte ao formulário para gerar os dados.');
-        location.href = formURL;
-      } else {
+    (function load(){
+      try {
+        const saved = localStorage.getItem('analiseTributaria');
+        if (!saved) throw new Error('Sem dados');
         data = JSON.parse(saved);
+      } catch(e){
+        alert('Nenhuma análise encontrada. Volte ao formulário para gerar os dados.');
+        location.href = '/form';
       }
-    } catch (e) {
-      console.error(e);
-      alert('Não foi possível ler os dados salvos. Voltando ao formulário.');
-      location.href = formURL;
-    }
-    if(!data) data = {};
+    })();
 
-    // ===== Cabeçalhos
+    // ===== Estado do período
+    const hasNew = data && data.calculos && (data.calculos.mensal || data.calculos.anual);
+    let periodo = (hasNew ? (data.periodo_padrao || (data.calculos.anual ? 'anual':'mensal')) : 'legacy');
+
+    // ===== Cabeçalhos fixos
     document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
     document.getElementById('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
     document.getElementById('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
@@ -222,185 +203,142 @@
     const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
     document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
-    /* ===== KPIs ===== */
-    const base = Number(safeGet(data,'calculo.base_utilizada',0)) || 0;
-    const mediaMensal = base / 12.0;
-
-    // totais absolutos (reuso nos gráficos e nas abas)
-    const vS = Number(safeGet(data,'calculo.simples.imposto',0)) || 0;
-    const vP = Number(safeGet(data,'calculo.presumido.imposto',0)) || 0;
-
-    // alíquotas vindas do back
-    const aS_num = Number(safeGet(data,'calculo.simples.aliquota_num', NaN));
-    const aP_num = Number(safeGet(data,'calculo.presumido.aliquota_num', NaN));
-    const aS_fmt_back = safeGet(data,'calculo.simples.aliquota_fmt', null);
-    const aP_fmt_back = safeGet(data,'calculo.presumido.aliquota_fmt', null);
-
-    const pctBR = n => n.toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
-
-    // NORMALIZAÇÃO: fração (0–1) ok; se vier em % (1–100), converte para fração
-    function normFrac(x){
-      if (!Number.isFinite(x)) return NaN;
-      return x > 1 ? x / 100 : x;
+    // ===== Toggle UI
+    const btnMensal = document.getElementById('btnMensal');
+    const btnAnual  = document.getElementById('btnAnual');
+    function paintToggle(){
+      btnMensal.classList.toggle('on', periodo==='mensal');
+      btnAnual.classList.toggle('on',  periodo==='anual');
+      const disabled = !hasNew;
+      btnMensal.disabled = disabled; btnAnual.disabled = disabled;
+      if(disabled){ btnMensal.title = btnAnual.title = 'Resposta antiga (sem mensal/anual)'; }
     }
+    btnMensal.addEventListener('click', ()=>{ if(hasNew){ periodo='mensal'; render(); } });
+    btnAnual .addEventListener('click', ()=>{ if(hasNew){ periodo='anual';  render(); } });
 
-    // 1) usa *_num; 2) senão imposto/base; 3) tenta parse do fmt; 4) fmt bruto
-    function effAliqSmart(imposto, base, numFromBack, fmtBack){
-      if (Number.isFinite(numFromBack)) {
-        const f = normFrac(numFromBack);
-        if (Number.isFinite(f)) return pctBR(f * 100);
-      }
-      if (Number.isFinite(imposto) && base > 0) {
-        const f = normFrac(imposto / base);
-        if (Number.isFinite(f)) return pctBR(f * 100);
-      }
-      if (typeof fmtBack === 'string' && fmtBack.trim()) {
-        const num = parseFloat(fmtBack.replace('%','').replace(/\./g,'').replace(',','.'));
-        if (Number.isFinite(num)) return pctBR(num);
-        return fmtBack.replace('%%','%');
-      }
-      return '—';
-    }
-
-    document.getElementById('kpiBase').textContent       = brl(base);
-    document.getElementById('kpiMediaMensal').textContent= brl(mediaMensal);
-    document.getElementById('kpiAliqS').textContent      = effAliqSmart(vS, base, aS_num, aS_fmt_back);
-    document.getElementById('kpiAliqP').textContent      = effAliqSmart(vP, base, aP_num, aP_fmt_back);
-    document.getElementById('kpiMelhor').textContent     = safeGet(data,'calculo.melhor_regime','—');
-    document.getElementById('kpiEconomia').textContent   = 'Economia estimada: ' + safeGet(data,'calculo.economia_fmt','—');
-
-    // Fator R (se vier)
-    const fatorRFlag = safeGet(data, 'calculo.inputs_normalizados.fator_r_efetivo', null);
-    if (fatorRFlag !== null) {
-      document.getElementById('kpiFatorR').innerHTML = fatorRFlag
-        ? '<span class="ok">Fator R ≥ 28% (encaixa em Anexo III)</span>'
-        : '<span class="warn">Fator R &lt; 28% (encaixa em Anexo V)</span>';
-    }
-
-    // ===== Abas: Impostos calculados =====
-    const tabSimples   = document.getElementById('tabSimples');
-    const tabPresumido = document.getElementById('tabPresumido');
-    const tbodyImpostos = document.getElementById('tbodyImpostos');
-    const totalImpostos = document.getElementById('totalImpostos');
-    const aliqEfetiva  = document.getElementById('aliqEfetiva');
-
-    function setActiveTab(btn) {
-      [tabSimples, tabPresumido].forEach(b=>{
-        b.classList.remove('bg-indigo-600','text-white','border-indigo-600');
-        b.classList.add('bg-white','text-gray-800','border-gray-200');
+    // ===== Charts (1 instância de cada)
+    let barChart=null, pieChart=null;
+    function setBarChart(vS, vP){
+      const ctx = document.getElementById('chartBarras').getContext('2d');
+      if(barChart){ barChart.destroy(); }
+      barChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: ['Simples', 'Presumido'],
+          datasets: [{ label: 'Impostos (R$)', data: [vS, vP], borderWidth: 1 }] },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
+          scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
+        }
       });
-      btn.classList.remove('bg-white','text-gray-800','border-gray-200');
-      btn.classList.add('bg-indigo-600','text-white','border-indigo-600');
+    }
+    function setPieChart(vS, vP){
+      const ctx = document.getElementById('chartPizza').getContext('2d');
+      if(pieChart){ pieChart.destroy(); }
+      pieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: ['Simples','Presumido'], datasets: [{ data:[vS,vP] }] },
+        options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
+      });
     }
 
-    function pctSmart(regime) {
-      if (regime === 'simples') {
-        if (Number.isFinite(aS_num)) return pctBR(normFrac(aS_num) * 100);
-        if (base>0) return pctBR(normFrac(vS/base) * 100);
-        return aS_fmt_back || '—';
+    // ===== Renderização
+    function renderTable(tbodyId, itens){
+      const tb = document.getElementById(tbodyId);
+      tb.innerHTML = '';
+      (itens||[]).forEach(it=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${it.tributo||'-'}</td>
+          <td>${it.aliquota_pct ? (it.aliquota_pct==='NA' ? '—' : (it.aliquota_pct.replace('.',',')) + '%') : '—'}</td>
+          <td>${brl(it.valor)}</td>`;
+        tb.appendChild(tr);
+      });
+    }
+
+    function render(){
+      paintToggle();
+
+      // Escolhe bloco conforme período (ou modo legado)
+      let bloco = null, base = 0, labelPeriodo='—', mesesInfo='';
+      if(hasNew){
+        bloco = data.calculos[periodo];
+        base  = (periodo==='mensal' ? safeGet(data,'bases.mensal',0) : safeGet(data,'bases.anual',0));
+        labelPeriodo = (periodo==='mensal' ? 'Mensal' : 'Anual');
+        mesesInfo = `(${bloco?.periodo_meses || (periodo==='mensal'?1:12)} meses)`;
       } else {
-        if (Number.isFinite(aP_num)) return pctBR(normFrac(aP_num) * 100);
-        if (base>0) return pctBR(normFrac(vP/base) * 100);
-        return aP_fmt_back || '—';
+        // legacy
+        bloco = data.calculo;
+        base  = safeGet(data,'calculo.base_utilizada',0);
+        labelPeriodo = 'Anual (compat)';
+        mesesInfo = `(${safeGet(data,'calculo.periodo_meses', 12)} meses)`;
       }
-    }
 
-    function renderImpostos(regime='simples'){
-      setActiveTab(regime==='simples' ? tabSimples : tabPresumido);
+      // KPIs
+      document.getElementById('kpiPeriodo').textContent = labelPeriodo;
+      document.getElementById('kpiMeses').textContent = mesesInfo;
+      document.getElementById('kpiBase').textContent  = brl(base);
 
-      const itens = safeGet(data, `calculo.${regime}.itens`, []) || [];
-      tbodyImpostos.innerHTML = '';
-      let total = 0;
+      const aliqS = bloco?.simples?.aliquota_fmt || (bloco?.simples?.aliquota_num!=null ? pct(100*bloco.simples.aliquota_num) : '—');
+      const aliqP = bloco?.presumido?.aliquota_fmt || (bloco?.presumido?.aliquota_num!=null ? pct(100*bloco.presumido.aliquota_num) : '—');
+      document.getElementById('kpiAliqS').textContent = aliqS;
+      document.getElementById('kpiAliqP').textContent = aliqP;
+      document.getElementById('kpiMelhor').textContent= bloco?.melhor_regime || '—';
+      document.getElementById('kpiEconomia').textContent = 'Economia estimada: ' + (bloco?.economia_fmt || '—');
 
+      // Gráficos
+      const vS = Number(bloco?.simples?.imposto || 0);
+      const vP = Number(bloco?.presumido?.imposto || 0);
+      setBarChart(vS, vP);
+      setPieChart(vS, vP);
+
+      // Tabelas detalhadas
+      renderTable('tbodySimples',   bloco?.simples?.itens || []);
+      renderTable('tbodyPresumido', bloco?.presumido?.itens || []);
+
+      // Sumários nos cabeçalhos das tabelas
+      document.getElementById('sumS').textContent = `Total: ${brl(vS)} • Alíquota: ${aliqS}`;
+      document.getElementById('sumP').textContent = `Total: ${brl(vP)} • Alíquota: ${aliqP}`;
+
+      // Atividades
+      const tbAtv = document.getElementById('tbodyAtividades');
+      const itens = safeGet(data,'atividades.itens',[]) || [];
+      tbAtv.innerHTML = '';
       itens.forEach(it=>{
         const tr = document.createElement('tr');
-        const aliq = (it.aliquota_pct ?? '').toString(); // "xx,xx" ou "xx.xx"
-        const val  = Number(it.valor || 0);
-        total += val;
         tr.innerHTML = `
-          <td>${it.tributo || '-'}</td>
-          <td>${aliq ? aliq.replace('.', ',') + '%' : '—'}</td>
-          <td>${brl(val)}</td>
-          <td>${it.obs || ''}</td>
-        `;
-        tbodyImpostos.appendChild(tr);
+          <td>${it.nome||'-'}</td>
+          <td>${brl(it.receita_12m||0)}</td>
+          <td>${brl(it.estimativa_proximo_ano||0)}</td>
+          <td>${it.exportacao ? 'Sim':'Não'}</td>`;
+        tbAtv.appendChild(tr);
       });
-
-      totalImpostos.textContent = brl(total);
-      aliqEfetiva.textContent = pctSmart(regime);
-    }
-
-    tabSimples.addEventListener('click', ()=>renderImpostos('simples'));
-    tabPresumido.addEventListener('click', ()=>renderImpostos('presumido'));
-    // inicial: Simples
-    renderImpostos('simples');
-
-    // ===== Gráficos
-    const ctxBar = document.getElementById('chartBarras').getContext('2d');
-    new Chart(ctxBar, {
-      type: 'bar',
-      data: {
-        labels: ['Simples', 'Presumido'],
-        datasets: [{
-          label: 'Impostos (R$)',
-          data: [vS, vP],
-          backgroundColor: ['#60a5fa','#f87171'],
-          borderColor: ['#3b82f6','#ef4444'],
-          borderWidth: 1,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
-        scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
+      const tot = safeGet(data,'atividades.totais_exportacao',null);
+      if(tot){
+        document.getElementById('totaisExport').innerHTML =
+          `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
       }
-    });
-
-    const ctxPie = document.getElementById('chartPizza').getContext('2d');
-    new Chart(ctxPie, {
-      type: 'doughnut',
-      data: {
-        labels: ['Simples','Presumido'],
-        datasets: [{ data:[vS,vP], backgroundColor:['#60a5fa','#f87171'] }]
-      },
-      options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
-    });
-
-    // ===== Tabela de atividades
-    const tb = document.getElementById('tbodyAtividades');
-    const itens = safeGet(data,'atividades.itens',[]) || [];
-    tb.innerHTML = '';
-    itens.forEach(it=>{
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${it.nome||'-'}</td>
-        <td>${brl(it.receita_12m||0)}</td>
-        <td>${brl(it.estimativa_proximo_ano||0)}</td>
-        <td>${it.exportacao ? 'Sim':'Não'}</td>`;
-      tb.appendChild(tr);
-    });
-    const tot = safeGet(data,'atividades.totais_exportacao',null);
-    if(tot){
-      document.getElementById('totaisExport').innerHTML =
-        `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
     }
 
     // ===== Ações
-    document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = formURL; });
+    document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = '/form'; });
     document.getElementById('btnLimpar').addEventListener('click', ()=>{
       localStorage.removeItem('analiseTributaria');
       alert('Dados limpos. Voltando ao formulário.');
-      location.href = formURL;
+      location.href = '/form';
     });
     document.getElementById('btnCSV').addEventListener('click', ()=>{
+      const itens = safeGet(data,'atividades.itens',[]) || [];
       const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
       itens.forEach(it=> rows.push([ it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não' ]));
-      const csv = rows.map(r=> r.map(v=> {
-        const s = String(v).replace(/"/g,'""'); return `"${s}"`;
-      }).join(',')).join('\n');
+      const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
       const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'atividades.csv'; a.click(); URL.revokeObjectURL(a.href);
     });
+
+    // ===== Boot
+    paintToggle();
+    render();
   </script>
 </body>
 </html>
