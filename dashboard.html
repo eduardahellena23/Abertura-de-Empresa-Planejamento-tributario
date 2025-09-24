@@ -222,15 +222,6 @@
     const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
     document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
-    // ===== Outra empresa (se existir)
-    const outra = safeGet(data, 'empresa.outra_empresa', null);
-    if (outra && typeof outra === 'object') {
-      document.getElementById('outraEmpresaSec').style.display = 'grid';
-      document.getElementById('ehSocio').textContent = outra.eh_socio ? 'Sim' : 'Não';
-      document.getElementById('pctSocio').textContent = outra.percentual_participacao != null ? pct(outra.percentual_participacao) : '—';
-      document.getElementById('fatOutra').textContent = outra.faturamento_anual != null ? brl(outra.faturamento_anual) : '—';
-    }
-
     /* ===== KPIs ===== */
     const base = Number(safeGet(data,'calculo.base_utilizada',0)) || 0;
     const mediaMensal = base / 12.0;
@@ -247,14 +238,28 @@
 
     const pctBR = n => n.toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
 
-    // 1) usa *_num (fração), 2) senão imposto/base, 3) fallback fmt
+    // NORMALIZAÇÃO: fração (0–1) ok; se vier em % (1–100), converte para fração
+    function normFrac(x){
+      if (!Number.isFinite(x)) return NaN;
+      return x > 1 ? x / 100 : x;
+    }
+
+    // 1) usa *_num; 2) senão imposto/base; 3) tenta parse do fmt; 4) fmt bruto
     function effAliqSmart(imposto, base, numFromBack, fmtBack){
-      if (Number.isFinite(numFromBack)) return pctBR(numFromBack*100);
-      if (base > 0 && Number.isFinite(imposto)) {
-        const x = (imposto / base) * 100;
-        if (Number.isFinite(x)) return pctBR(x);
+      if (Number.isFinite(numFromBack)) {
+        const f = normFrac(numFromBack);
+        if (Number.isFinite(f)) return pctBR(f * 100);
       }
-      return (typeof fmtBack === 'string' && fmtBack.trim()) ? fmtBack : '—';
+      if (Number.isFinite(imposto) && base > 0) {
+        const f = normFrac(imposto / base);
+        if (Number.isFinite(f)) return pctBR(f * 100);
+      }
+      if (typeof fmtBack === 'string' && fmtBack.trim()) {
+        const num = parseFloat(fmtBack.replace('%','').replace(/\./g,'').replace(',','.'));
+        if (Number.isFinite(num)) return pctBR(num);
+        return fmtBack.replace('%%','%');
+      }
+      return '—';
     }
 
     document.getElementById('kpiBase').textContent       = brl(base);
@@ -290,12 +295,12 @@
 
     function pctSmart(regime) {
       if (regime === 'simples') {
-        if (Number.isFinite(aS_num)) return pctBR(aS_num*100);
-        if (base>0) return pctBR((vS/base)*100);
+        if (Number.isFinite(aS_num)) return pctBR(normFrac(aS_num) * 100);
+        if (base>0) return pctBR(normFrac(vS/base) * 100);
         return aS_fmt_back || '—';
       } else {
-        if (Number.isFinite(aP_num)) return pctBR(aP_num*100);
-        if (base>0) return pctBR((vP/base)*100);
+        if (Number.isFinite(aP_num)) return pctBR(normFrac(aP_num) * 100);
+        if (base>0) return pctBR(normFrac(vP/base) * 100);
         return aP_fmt_back || '—';
       }
     }
