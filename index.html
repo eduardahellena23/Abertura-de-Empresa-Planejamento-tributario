@@ -59,7 +59,7 @@
         <!-- RBT12 + Município -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Faturamento dos últimos 12 meses (RBT12) – R$</label>
-          <input type="number" id="rbt12" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420000">
+          <input type="text" id="rbt12" data-money required class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420.000">
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Município</label>
@@ -80,7 +80,7 @@
         </div>
         <div class="flex flex-col md:col-span-2" id="wrap_fat_outra" style="display:none;">
           <label class="text-sm font-medium text-gray-700">Faturamento anual da outra empresa (R$)</label>
-          <input type="number" id="socio_outra_empresa_faturamento_anual" step="0.01" placeholder="Ex.: 600000" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="socio_outra_empresa_faturamento_anual" data-money step="0.01" placeholder="Ex.: 600.000" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
         <!-- CNAE / Pró-labore -->
@@ -90,13 +90,13 @@
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
-          <input type="number" id="prolabore" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="prolabore" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
         <!-- Faturamento mensal (opcional) -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Faturamento mensal – R$</label>
-          <input type="number" id="faturamento_mensal" step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35000">
+          <input type="text" id="faturamento_mensal" data-money step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35.000">
         </div>
 
         <!-- Anexo -->
@@ -133,7 +133,7 @@
         <!-- Pró-labore ideal / Funcionários / Folha -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore Ideal (R$)</label>
-          <input type="number" id="prolabore_ideal" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="prolabore_ideal" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
         <!-- ISS automático (somente leitura) -->
@@ -152,7 +152,7 @@
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Valor da Folha (R$)</label>
-          <input type="number" id="folha" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="folha" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
         <!-- Campos adicionais (empresa constituída) -->
@@ -261,6 +261,32 @@
       anexoHint.textContent = hintText || "";
     }
 
+    // ===== Máscara BR (5.000 / 50.000,50) =====
+    function formatBRIntWithDots(intStr){
+      intStr = intStr.replace(/^0+(?=\d)/, '');
+      return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+    function maskMoneyInput(el){
+      let v = el.value;
+      v = v.replace(/[^\d,]/g, '');          // só dígitos e vírgula
+      const parts = v.split(',');
+      let inteiro = parts[0] || '';
+      inteiro = inteiro === '' ? '' : formatBRIntWithDots(inteiro);
+      let dec = parts[1] != null ? parts[1].slice(0,2) : null;
+      el.value = dec != null ? `${inteiro},${dec}` : inteiro;
+    }
+    function attachMoneyMask(){
+      document.querySelectorAll('input[data-money]').forEach(el=>{
+        el.addEventListener('input', ()=> maskMoneyInput(el));
+        el.addEventListener('blur', ()=> maskMoneyInput(el));
+      });
+    }
+    function parseBRNumber(str){
+      if(!str) return 0;
+      return parseFloat(String(str).replace(/\./g, '').replace(',', '.')) || 0;
+    }
+    window.addEventListener('DOMContentLoaded', attachMoneyMask);
+
     // ===== CNAE → sugere Anexo (usa RBT12 e Folha*12)
     const cnaeInput  = document.getElementById('cnae');
     const rbt12El    = document.getElementById('rbt12');
@@ -270,8 +296,8 @@
       const raw = (cnaeInput?.value || '').trim();
       if(!raw) return;
 
-      const rbt12   = parseFloat(rbt12El?.value || '0') || 0;
-      const folha12 = (parseFloat(folhaEl?.value || '0') || 0) * 12;
+      const rbt12   = parseBRNumber(rbt12El?.value || '0') || 0;
+      const folha12 = (parseBRNumber(folhaEl?.value || '0') || 0) * 12;
 
       try{
         statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
@@ -309,24 +335,27 @@
         tipo_empresa: document.getElementById('tipo_empresa').value,
         municipio: document.getElementById('municipio').value || '',
 
-        rbt12: parseFloat(document.getElementById('rbt12').value || '0'),
-        faturamento_mensal: parseFloat(document.getElementById('faturamento_mensal')?.value || '0'),
+        // números com máscara → parseBRNumber
+        rbt12: parseBRNumber(document.getElementById('rbt12').value),
+        faturamento_mensal: parseBRNumber(document.getElementById('faturamento_mensal')?.value),
 
         // legado (compat no backend)
         faturamento: 0,
 
+        // Sócio em outra empresa
         socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
         socio_outra_empresa_percentual: parseFloat(document.getElementById('socio_outra_empresa_percentual').value || '0'),
-        socio_outra_empresa_faturamento_anual: parseFloat(document.getElementById('socio_outra_empresa_faturamento_anual')?.value || '0'),
+        socio_outra_empresa_faturamento_anual: parseBRNumber(document.getElementById('socio_outra_empresa_faturamento_anual')?.value),
 
         cnae: document.getElementById('cnae').value || '',
-        prolabore: parseFloat(document.getElementById('prolabore').value || '0'),
+        prolabore: parseBRNumber(document.getElementById('prolabore').value),
         anexo: document.getElementById('anexo').value || '',
         comparar: document.getElementById('comparar').value || '',
-        prolabore_ideal: parseFloat(document.getElementById('prolabore_ideal').value || '0'),
+        prolabore_ideal: parseBRNumber(document.getElementById('prolabore_ideal').value),
         tem_funcionarios: document.getElementById('tem_funcionarios').value,
-        folha: parseFloat(document.getElementById('folha').value || '0'),
-        // >>> NÃO enviamos mais 'icms' (ISS é automático no back)
+        folha: parseBRNumber(document.getElementById('folha').value),
+
+        // >>> NÃO enviamos 'icms' (ISS é automático no back)
       };
     }
 
