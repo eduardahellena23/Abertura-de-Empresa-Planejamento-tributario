@@ -99,6 +99,51 @@
       </div>
     </section>
 
+    <!-- Impostos calculados (abas) -->
+    <section class="card">
+      <div class="flex items-center justify-between mb-3">
+        <div class="muted text-sm">Impostos calculados por regime</div>
+        <div class="flex gap-2">
+          <button id="tabSimples"   data-tab="simples"
+                  class="px-3 py-1 rounded-md border border-gray-200 bg-white text-gray-800 hover:bg-gray-50">
+            Simples Nacional
+          </button>
+          <button id="tabPresumido" data-tab="presumido"
+                  class="px-3 py-1 rounded-md border border-gray-200 bg-white text-gray-800 hover:bg-gray-50">
+            Lucro Presumido
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Tributo</th>
+              <th>Alíquota (%)</th>
+              <th>Valor (R$)</th>
+              <th>Obs.</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyImpostos"></tbody>
+          <tfoot>
+            <tr>
+              <td class="font-semibold">Total</td>
+              <td></td>
+              <td id="totalImpostos" class="font-semibold"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td class="font-semibold">Alíquota efetiva</td>
+              <td id="aliqEfetiva" class="font-semibold"></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
     <!-- Gráficos -->
     <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="card">
@@ -190,11 +235,11 @@
     const base = Number(safeGet(data,'calculo.base_utilizada',0)) || 0;
     const mediaMensal = base / 12.0;
 
-    // totais absolutos (reuso nos gráficos)
+    // totais absolutos (reuso nos gráficos e nas abas)
     const vS = Number(safeGet(data,'calculo.simples.imposto',0)) || 0;
     const vP = Number(safeGet(data,'calculo.presumido.imposto',0)) || 0;
 
-    // alíquotas do backend
+    // alíquotas vindas do back
     const aS_num = Number(safeGet(data,'calculo.simples.aliquota_num', NaN));
     const aP_num = Number(safeGet(data,'calculo.presumido.aliquota_num', NaN));
     const aS_fmt_back = safeGet(data,'calculo.simples.aliquota_fmt', null);
@@ -226,6 +271,64 @@
         ? '<span class="ok">Fator R ≥ 28% (encaixa em Anexo III)</span>'
         : '<span class="warn">Fator R &lt; 28% (encaixa em Anexo V)</span>';
     }
+
+    // ===== Abas: Impostos calculados =====
+    const tabSimples   = document.getElementById('tabSimples');
+    const tabPresumido = document.getElementById('tabPresumido');
+    const tbodyImpostos = document.getElementById('tbodyImpostos');
+    const totalImpostos = document.getElementById('totalImpostos');
+    const aliqEfetiva  = document.getElementById('aliqEfetiva');
+
+    function setActiveTab(btn) {
+      [tabSimples, tabPresumido].forEach(b=>{
+        b.classList.remove('bg-indigo-600','text-white','border-indigo-600');
+        b.classList.add('bg-white','text-gray-800','border-gray-200');
+      });
+      btn.classList.remove('bg-white','text-gray-800','border-gray-200');
+      btn.classList.add('bg-indigo-600','text-white','border-indigo-600');
+    }
+
+    function pctSmart(regime) {
+      if (regime === 'simples') {
+        if (Number.isFinite(aS_num)) return pctBR(aS_num*100);
+        if (base>0) return pctBR((vS/base)*100);
+        return aS_fmt_back || '—';
+      } else {
+        if (Number.isFinite(aP_num)) return pctBR(aP_num*100);
+        if (base>0) return pctBR((vP/base)*100);
+        return aP_fmt_back || '—';
+      }
+    }
+
+    function renderImpostos(regime='simples'){
+      setActiveTab(regime==='simples' ? tabSimples : tabPresumido);
+
+      const itens = safeGet(data, `calculo.${regime}.itens`, []) || [];
+      tbodyImpostos.innerHTML = '';
+      let total = 0;
+
+      itens.forEach(it=>{
+        const tr = document.createElement('tr');
+        const aliq = (it.aliquota_pct ?? '').toString(); // "xx,xx" ou "xx.xx"
+        const val  = Number(it.valor || 0);
+        total += val;
+        tr.innerHTML = `
+          <td>${it.tributo || '-'}</td>
+          <td>${aliq ? aliq.replace('.', ',') + '%' : '—'}</td>
+          <td>${brl(val)}</td>
+          <td>${it.obs || ''}</td>
+        `;
+        tbodyImpostos.appendChild(tr);
+      });
+
+      totalImpostos.textContent = brl(total);
+      aliqEfetiva.textContent = pctSmart(regime);
+    }
+
+    tabSimples.addEventListener('click', ()=>renderImpostos('simples'));
+    tabPresumido.addEventListener('click', ()=>renderImpostos('presumido'));
+    // inicial: Simples
+    renderImpostos('simples');
 
     // ===== Gráficos
     const ctxBar = document.getElementById('chartBarras').getContext('2d');
