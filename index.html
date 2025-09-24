@@ -10,7 +10,6 @@
     body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1a202c; }
     .page { display: none; }
     .page-container { z-index: 10; }
-    .compact-hint{ font-size: .75rem; color:#6b7280; margin-top:.25rem }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -60,13 +59,14 @@
         <!-- RBT12 + Município -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Faturamento dos últimos 12 meses (RBT12) – R$</label>
-          <input type="text" id="rbt12" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420000" data-compact-preview data-money-mask>
+          <input type="number" id="rbt12" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420000">
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Município</label>
           <input type="text" id="municipio" required class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
+        <!-- Sócio outra empresa -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Sócio de outra empresa?</label>
           <select id="socio_outra_empresa" required class="mt-1 p-3 border border-gray-300 rounded-md">
@@ -76,27 +76,27 @@
         </div>
         <div class="flex flex-col" id="wrap_percentual" style="display:none;">
           <label class="text-sm font-medium text-gray-700">% do sócio na outra empresa</label>
-          <input type="text" id="socio_outra_empresa_percentual" inputmode="decimal" placeholder="0" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
+          <input type="number" id="socio_outra_empresa_percentual" step="0.01" placeholder="0" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
-        <!-- Faturamento anual da outra -->
         <div class="flex flex-col md:col-span-2" id="wrap_fat_outra" style="display:none;">
           <label class="text-sm font-medium text-gray-700">Faturamento anual da outra empresa (R$)</label>
-          <input type="text" id="socio_outra_empresa_faturamento_anual" inputmode="decimal" placeholder="Ex.: 600000" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
+          <input type="number" id="socio_outra_empresa_faturamento_anual" step="0.01" placeholder="Ex.: 600000" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
+        <!-- CNAE / Pró-labore -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">CNAE (formulário)</label>
           <input type="text" id="cnae" required class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 47.11-3-01">
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
-          <input type="text" id="prolabore" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
+          <input type="number" id="prolabore" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
-        <!-- Faturamento mensal -->
+        <!-- Faturamento mensal (opcional) -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Faturamento mensal – R$</label>
-          <input type="text" id="faturamento_mensal" inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35000" data-compact-preview data-money-mask>
+          <input type="number" id="faturamento_mensal" step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35000">
         </div>
 
         <!-- Anexo -->
@@ -119,7 +119,7 @@
           <p id="anexoHint" class="text-xs text-gray-500 mt-1"></p>
         </div>
 
-        <!-- Regime a Comparar -->
+        <!-- Regime a comparar -->
         <div class="flex flex-col md:col-span-2">
           <label class="text-sm font-medium text-gray-700 mb-2">Regime a Comparar</label>
           <div id="comparar-buttons" class="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -130,18 +130,17 @@
           <input type="hidden" id="comparar" required>
         </div>
 
+        <!-- Pró-labore ideal / Funcionários / Folha -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore Ideal (R$)</label>
-          <input type="text" id="prolabore_ideal" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
+          <input type="number" id="prolabore_ideal" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
+        <!-- ISS automático (somente leitura) -->
         <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">ICMS (%)</label>
-          <input type="text" id="icms" required inputmode="decimal"
-                 class="mt-1 p-3 border border-gray-300 rounded-md"
-                 placeholder="Ex.: 3"
-                 data-percent-mask>
-          <div class="compact-hint">Digite em % (ex.: <b>3</b> = 3%)</div>
+          <label class="text-sm font-medium text-gray-700">ISS (auto)</label>
+          <input type="text" value="3,00%" class="mt-1 p-3 border border-gray-200 rounded-md bg-gray-100 text-gray-600" disabled>
+          <small class="text-xs text-gray-500">Usando 3% por padrão. Podemos ligar a uma tabela por município/CNAE depois.</small>
         </div>
 
         <div class="flex flex-col">
@@ -153,12 +152,12 @@
         </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Valor da Folha (R$)</label>
-          <input type="text" id="folha" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
+          <input type="number" id="folha" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
-        <!-- Extras empresa constituída -->
+        <!-- Campos adicionais (empresa constituída) -->
         <div id="constitFields" class="md:col-span-2 p-4 rounded-lg border border-indigo-200 bg-indigo-50" style="display:none;">
-          <!-- seus campos extras aqui -->
+          <!-- extras -->
         </div>
 
         <!-- Ações -->
@@ -198,10 +197,10 @@
 
   <!-- Scripts -->
   <script>
-    // ===== CONFIG
+    // ===== CONFIG API
     const apiUrlBase = "http://127.0.0.1:8000";
 
-    // ===== Navegação
+    // ===== Navegação básica
     const splashPage = document.getElementById('splashPage');
     const empresaFormPage = document.getElementById('empresaFormPage');
     const pessoaFisicaFormPage = document.getElementById('pessoaFisicaFormPage');
@@ -219,7 +218,7 @@
     btnPessoaFisica?.addEventListener('click', ()=>showPage('pessoaFisicaFormPage'));
     backToSplash1?.addEventListener('click', ()=>showPage('splashPage'));
 
-    // ===== Sócio outra empresa
+    // ===== Mostrar campos de “sócio de outra empresa”
     const socioOutra = document.getElementById('socio_outra_empresa');
     const wrapPercentual = document.getElementById('wrap_percentual');
     const wrapFatOutra = document.getElementById('wrap_fat_outra');
@@ -231,7 +230,7 @@
     socioOutra.addEventListener('change', toggleSocioCampos);
     toggleSocioCampos();
 
-    // ===== Comparar
+    // ===== Regime a comparar
     const compararButtons = document.querySelectorAll('.comparar-btn');
     const compararInput = document.getElementById('comparar');
     function setCompararActive(btn) {
@@ -262,7 +261,7 @@
       anexoHint.textContent = hintText || "";
     }
 
-    // ===== CNAE → sugere Anexo
+    // ===== CNAE → sugere Anexo (usa RBT12 e Folha*12)
     const cnaeInput  = document.getElementById('cnae');
     const rbt12El    = document.getElementById('rbt12');
     const folhaEl    = document.getElementById('folha');
@@ -271,8 +270,8 @@
       const raw = (cnaeInput?.value || '').trim();
       if(!raw) return;
 
-      const rbt12   = parseBR(rbt12El?.value || '0');
-      const folha12 = parseBR(folhaEl?.value || '0') * 12;
+      const rbt12   = parseFloat(rbt12El?.value || '0') || 0;
+      const folha12 = (parseFloat(folhaEl?.value || '0') || 0) * 12;
 
       try{
         statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
@@ -302,106 +301,6 @@
     rbt12El && rbt12El.addEventListener('change', sugerirAnexoPorCNAE);
     folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
 
-    // ===== Helpers numéricos (BR)
-    const nfCompactPT = new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 2 });
-    function formatCompactBR(n){
-      if (!isFinite(n) || n === 0) return '';
-      return nfCompactPT.format(n)
-        .replace(/\s*mil\b/i, 'K')
-        .replace(/\s*mi\b/i, 'M')
-        .replace(/\s*bi\b/i, 'B')
-        .replace(/\s*tri\b/i, 'T');
-    }
-
-    function maskMoney(value) {
-      if (value == null) return '';
-      let s = String(value).replace(/[^\d,]/g, '');
-      const parts = s.split(',');
-      let intPart = parts[0].replace(/^0+(?=\d)/, '');
-      let decPart = parts[1] ? parts[1].slice(0, 2) : '';
-      intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      return decPart ? `${intPart},${decPart}` : intPart;
-    }
-    function parseBR(s){
-      if (!s) return 0;
-      const num = parseFloat(String(s).replace(/\./g,'').replace(',','.'));
-      return isNaN(num) ? 0 : num;
-    }
-    function attachMoneyMask(input){
-      const update = ()=>{
-        const caret = input.selectionStart;
-        const before = input.value;
-        input.value = maskMoney(before);
-        const diff = input.value.length - before.length;
-        if (document.activeElement === input && typeof caret === 'number') {
-          input.setSelectionRange(Math.max(0, caret + diff), Math.max(0, caret + diff));
-        }
-        const hint = input.nextElementSibling;
-        if (hint && hint.classList.contains('compact-hint')) {
-          const n = parseBR(input.value);
-          hint.textContent = n ? `≈ ${formatCompactBR(n)}` : '';
-        }
-      };
-      input.addEventListener('input', update);
-      input.addEventListener('change', update);
-      update();
-    }
-
-    // % BR
-    function maskPercent(value){
-      if (value == null) return '';
-      let s = String(value).replace(/[^\d,]/g, '');
-      const parts = s.split(',');
-      let intPart = parts[0].replace(/^0+(?=\d)/, '');
-      let decPart = parts[1] ? parts[1].slice(0, 2) : '';
-      intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      const out = decPart ? `${intPart},${decPart}` : intPart;
-      return out ? `${out}%` : '';
-    }
-    function parsePercentBR(s){
-      if (!s) return 0;
-      const clean = String(s).replace('%','').trim();
-      const num = parseFloat(clean.replace(/\./g,'').replace(',','.'));
-      if (isNaN(num)) return 0;
-      return num / 100.0;
-    }
-    function attachPercentMask(input){
-      const update = ()=>{
-        const before = input.value;
-        const caret = input.selectionStart;
-        const noPct = before.replace('%','');
-        input.value = maskPercent(noPct);
-        if (document.activeElement === input && typeof caret === 'number') {
-          const diff = input.value.length - before.length;
-          input.setSelectionRange(Math.max(0, caret + diff), Math.max(0, caret + diff));
-        }
-      };
-      input.addEventListener('input', update);
-      input.addEventListener('change', update);
-      update();
-    }
-
-    // inicializadores
-    document.querySelectorAll('input[data-money-mask]').forEach(attachMoneyMask);
-    document.querySelectorAll('input[data-percent-mask]').forEach(attachPercentMask);
-
-    function attachCompactPreview(input){
-      let hint = input.nextElementSibling;
-      if (!hint || !hint.classList.contains('compact-hint')) {
-        hint = document.createElement('div');
-        hint.className = 'compact-hint';
-        input.insertAdjacentElement('afterend', hint);
-      }
-      const update = ()=>{
-        const n = parseBR(input.value || '0');
-        hint.textContent = n ? `≈ ${formatCompactBR(n)}` : '';
-      };
-      input.addEventListener('input', update);
-      input.addEventListener('change', update);
-      update();
-    }
-    document.querySelectorAll('input[data-compact-preview]').forEach(attachCompactPreview);
-
     // ===== Payload
     function montarPayload(){
       return {
@@ -410,27 +309,24 @@
         tipo_empresa: document.getElementById('tipo_empresa').value,
         municipio: document.getElementById('municipio').value || '',
 
-        rbt12: parseBR(document.getElementById('rbt12').value),
-        faturamento_mensal: parseBR(document.getElementById('faturamento_mensal')?.value),
+        rbt12: parseFloat(document.getElementById('rbt12').value || '0'),
+        faturamento_mensal: parseFloat(document.getElementById('faturamento_mensal')?.value || '0'),
 
+        // legado (compat no backend)
         faturamento: 0,
 
         socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
-        socio_outra_empresa_percentual: parseBR(document.getElementById('socio_outra_empresa_percentual').value),
-        socio_outra_empresa_faturamento_anual: parseBR(document.getElementById('socio_outra_empresa_faturamento_anual')?.value),
+        socio_outra_empresa_percentual: parseFloat(document.getElementById('socio_outra_empresa_percentual').value || '0'),
+        socio_outra_empresa_faturamento_anual: parseFloat(document.getElementById('socio_outra_empresa_faturamento_anual')?.value || '0'),
 
         cnae: document.getElementById('cnae').value || '',
-        prolabore: parseBR(document.getElementById('prolabore').value),
+        prolabore: parseFloat(document.getElementById('prolabore').value || '0'),
         anexo: document.getElementById('anexo').value || '',
         comparar: document.getElementById('comparar').value || '',
-        prolabore_ideal: parseBR(document.getElementById('prolabore_ideal').value),
+        prolabore_ideal: parseFloat(document.getElementById('prolabore_ideal').value || '0'),
         tem_funcionarios: document.getElementById('tem_funcionarios').value,
-        folha: parseBR(document.getElementById('folha').value),
-
-        // ICMS em FRAÇÃO (3% -> 0.03)
-        icms: parsePercentBR(document.getElementById('icms').value || '0'),
-
-        empresa_constituida: (document.getElementById('tipo_empresa').value === 'constituida'),
+        folha: parseFloat(document.getElementById('folha').value || '0'),
+        // >>> NÃO enviamos mais 'icms' (ISS é automático no back)
       };
     }
 
@@ -458,7 +354,7 @@
         }
         const json = await resp.json();
         localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        window.location.href = "dashboard.html";
+        window.location.href = "dashboard.html"; // usar o estático
       }catch(e){
         statusMessage.textContent = `Erro de rede: ${e.message}`;
       }finally{
@@ -481,9 +377,9 @@
           statusMessage.textContent = `Erro (${resp.status}): ${text}`;
           return;
         }
-        const { file, download_url_query, download_url_path } = await resp.json();
+        const { file } = await resp.json();
         const a = document.createElement('a');
-        a.href = `${apiUrlBase}${download_url_path}`;
+        a.href = `${apiUrlBase}/baixar-planilha/${file}`;
         a.setAttribute('download', file);
         document.body.appendChild(a); a.click(); a.remove();
         statusMessage.textContent = `Download da planilha "${file}" iniciado.`;
@@ -494,7 +390,7 @@
       }
     });
 
-    // Sugere anexo se já houver CNAE preenchido ao carregar
+    // Sugere anexo ao carregar
     window.addEventListener('DOMContentLoaded', ()=>{
       if (cnaeInput && cnaeInput.value.trim()){
         sugerirAnexoPorCNAE();
