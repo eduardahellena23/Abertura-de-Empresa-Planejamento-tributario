@@ -16,9 +16,6 @@
     th{ color:#334155; font-weight:600; text-align:left; background:#f8fafc }
     .kpi { font-size:1.5rem; font-weight:800 }
     .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid rgba(2,6,23,.12); background:#f8fafc }
-    a.link { color:#1d4ed8; text-decoration: underline; }
-    .ok   { color:#16a34a }
-    .warn { color:#b45309 }
     .toggle .on { background:#1d4ed8; color:#fff; }
   </style>
 </head>
@@ -29,8 +26,6 @@
         <h1 class="text-2xl font-bold title">📊 Dashboard Tributário</h1>
         <p class="muted text-sm">Comparativo Simples Nacional × Lucro Presumido</p>
       </div>
-
-      <!-- Toggle Mensal/Anual -->
       <div class="card toggle flex items-center gap-2">
         <button id="btnMensal" class="px-3 py-1 rounded-md">Mensal</button>
         <button id="btnAnual" class="px-3 py-1 rounded-md">Anual</button>
@@ -216,7 +211,7 @@
     btnMensal.addEventListener('click', ()=>{ if(hasNew){ periodo='mensal'; render(); } });
     btnAnual .addEventListener('click', ()=>{ if(hasNew){ periodo='anual';  render(); } });
 
-    // ===== Charts (1 instância de cada)
+    // ===== Charts
     let barChart=null, pieChart=null;
     function setBarChart(vS, vP){
       const ctx = document.getElementById('chartBarras').getContext('2d');
@@ -242,7 +237,6 @@
       });
     }
 
-    // ===== Tabela
     function renderTable(tbodyId, itens){
       const tb = document.getElementById(tbodyId);
       tb.innerHTML = '';
@@ -256,7 +250,7 @@
       });
     }
 
-    // ===== Render principal (corrigido base)
+    // ===== Render principal (base corrigida)
     function render(){
       paintToggle();
 
@@ -264,22 +258,23 @@
       if (hasNew) {
         bloco = data.calculos[periodo];
 
-        // Preferir a base usada pelo back no próprio bloco
+        // 1) Base usada no cálculo
         const baseFromBloco = safeGet(bloco, 'base_utilizada', null);
+        // 2) Fallbacks do back
+        const baseMensal  = safeGet(data, 'bases.mensal', null);
+        const baseAnual   = safeGet(data, 'bases.anual',  null);
+        // 3) legado
+        const legacyBase  = safeGet(data, 'calculo.base_utilizada', null);
 
-        // Fallbacks
-        const fallbackMensal = safeGet(data, 'bases.mensal', 0);
-        const fallbackAnual  = safeGet(data, 'bases.anual',  0);
-        const legacyBase     = safeGet(data, 'calculo.base_utilizada', 0);
-
-        base = (baseFromBloco != null)
-                ? baseFromBloco
-                : (periodo === 'mensal'
-                      ? (fallbackMensal || (legacyBase ? legacyBase/12 : 0))
-                      : (fallbackAnual  || legacyBase));
-
-        labelPeriodo = (periodo === 'mensal' ? 'Mensal' : 'Anual');
-        mesesInfo = `(${bloco?.periodo_meses || (periodo==='mensal' ? 1 : 12)} meses)`;
+        if (periodo === 'mensal') {
+          base = (baseFromBloco ?? baseMensal ?? (legacyBase!=null ? legacyBase/12 : 0));
+          labelPeriodo = 'Mensal';
+          mesesInfo = `(${bloco?.periodo_meses || 1} meses)`;
+        } else {
+          base = (baseFromBloco ?? baseAnual ?? (legacyBase ?? 0));
+          labelPeriodo = 'Anual';
+          mesesInfo = `(${bloco?.periodo_meses || 12} meses)`;
+        }
       } else {
         // legacy
         bloco = data.calculo;
@@ -300,38 +295,16 @@
       document.getElementById('kpiMelhor').textContent= bloco?.melhor_regime || '—';
       document.getElementById('kpiEconomia').textContent = 'Economia estimada: ' + (bloco?.economia_fmt || '—');
 
-      // Gráficos
       const vS = Number(bloco?.simples?.imposto || 0);
       const vP = Number(bloco?.presumido?.imposto || 0);
       setBarChart(vS, vP);
       setPieChart(vS, vP);
 
-      // Tabelas detalhadas
       renderTable('tbodySimples',   bloco?.simples?.itens || []);
       renderTable('tbodyPresumido', bloco?.presumido?.itens || []);
 
-      // Sumários nos cabeçalhos das tabelas
       document.getElementById('sumS').textContent = `Total: ${brl(vS)} • Alíquota: ${aliqS}`;
       document.getElementById('sumP').textContent = `Total: ${brl(vP)} • Alíquota: ${aliqP}`;
-
-      // Atividades
-      const tbAtv = document.getElementById('tbodyAtividades');
-      const itens = safeGet(data,'atividades.itens',[]) || [];
-      tbAtv.innerHTML = '';
-      itens.forEach(it=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${it.nome||'-'}</td>
-          <td>${brl(it.receita_12m||0)}</td>
-          <td>${brl(it.estimativa_proximo_ano||0)}</td>
-          <td>${it.exportacao ? 'Sim':'Não'}</td>`;
-        tbAtv.appendChild(tr);
-      });
-      const tot = safeGet(data,'atividades.totais_exportacao',null);
-      if(tot){
-        document.getElementById('totaisExport').innerHTML =
-          `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
-      }
     }
 
     // ===== Ações
@@ -342,7 +315,7 @@
       location.href = '/form';
     });
     document.getElementById('btnCSV').addEventListener('click', ()=>{
-      const itens = safeGet(data,'atividades.itens',[]) || [];
+      const itens = (data?.atividades?.itens)||[];
       const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
       itens.forEach(it=> rows.push([ it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não' ]));
       const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -350,7 +323,6 @@
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'atividades.csv'; a.click(); URL.revokeObjectURL(a.href);
     });
 
-    // ===== Boot
     render();
   </script>
 </body>
