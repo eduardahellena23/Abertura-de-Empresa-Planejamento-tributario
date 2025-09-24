@@ -1,45 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard Tributário</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* ===== Tema Aqua Claro ===== */
-    body {
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: #eef6ff;       /* fundo claro azulado */
-      color: #0b1220;            /* texto principal */
-    }
-    .card {
-      background: #ffffff;       /* cartões brancos */
-      border: 1px solid rgba(18, 54, 100, .12);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 6px 20px rgba(2, 12, 27, 0.06);
-    }
-    .muted { color:#556276; }
-    .title { color:#0ea5e9; }     /* Cyan-500 */
+    /* Tema claro */
+    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#f5f7fb; color:#111827; }
+    .card { background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,.04) }
+    .muted { color:#6b7280; }
+    .title { color:#1f2937; }
     table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px; border-bottom:1px solid rgba(18, 54, 100, .08); }
-    th { color:#075985; font-weight:600; text-align:left; } /* Cyan-900 */
-    .kpi { font-size:1.75rem; font-weight:800 }
-    .chip {
-      font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem;
-      border:1px solid rgba(14,165,233,.35);     /* Cyan-500/35 */
-      background:#e0f2fe;                        /* Cyan-100 */
-      color:#075985;                              /* Cyan-900 */
-    }
-    a.link { color:#0284c7; text-decoration: underline; }
-    .ok   { color:#059669 }   /* Emerald-600 */
-    .warn { color:#b45309 }   /* Amber-700 */
-    tfoot td { font-weight:700; }
-    .callout {
-      background:#fff; border:1px dashed rgba(18,54,100,.25);
-      padding:14px; border-radius:12px; color:#334155;
-    }
+    th,td{ padding:10px; border-bottom:1px solid #eef2f7 }
+    th{ color:#374151; font-weight:600; text-align:left; background:#f3f4f6 }
+    .kpi { font-size:1.75rem; font-weight:800; color:#111827 }
+    .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid #e5e7eb; background:#f9fafb; color:#374151 }
+    a.link { color:#2563eb; text-decoration: underline; }
+    .ok   { color:#059669 }
+    .warn { color:#d97706 }
   </style>
 </head>
 <body class="min-h-screen">
@@ -49,13 +29,6 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 space-y-6">
-
-    <!-- Avisos -->
-    <section id="msgBox" class="hidden">
-      <div class="callout">
-        <div id="msgText" class="text-sm"></div>
-      </div>
-    </section>
 
     <!-- Identificação -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -138,61 +111,6 @@
       </div>
     </section>
 
-    <!-- Detalhamento dos Impostos por Regime -->
-    <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Simples -->
-      <div class="card">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-lg font-semibold title">Simples Nacional — Detalhamento</h2>
-          <div class="text-sm muted">Alíquota efetiva: <span id="simplesAliqEff" class="font-semibold"></span></div>
-        </div>
-        <div class="overflow-x-auto">
-          <table>
-            <thead>
-              <tr>
-                <th>Tributo</th>
-                <th>Alíquota</th>
-                <th>Valor (R$)</th>
-              </tr>
-            </thead>
-            <tbody id="tbSimples"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2">Total (Simples)</td>
-                <td id="totSimples"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-
-      <!-- Presumido -->
-      <div class="card">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-lg font-semibold title">Lucro Presumido — Detalhamento</h2>
-          <div class="text-sm muted">Alíquota efetiva: <span id="presumidoAliqEff" class="font-semibold"></span></div>
-        </div>
-        <div class="overflow-x-auto">
-          <table>
-            <thead>
-              <tr>
-                <th>Tributo</th>
-                <th>Alíquota</th>
-                <th>Valor (R$)</th>
-              </tr>
-            </thead>
-            <tbody id="tbPresumido"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2">Total (Presumido)</td>
-                <td id="totPresumido"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-    </section>
-
     <!-- Tabela atividades -->
     <section class="card">
       <div class="muted text-sm mb-3">Separação por atividade</div>
@@ -216,207 +134,162 @@
 
     <!-- Ações -->
     <section class="flex flex-col md:flex-row gap-3 pb-10">
-      <button id="btnVoltar" class="px-4 py-2 rounded-lg bg-cyan-600/10 text-cyan-900 border border-cyan-600/30 hover:bg-cyan-600/20">← Voltar ao formulário</button>
-      <button id="btnLimpar" class="px-4 py-2 rounded-lg bg-rose-500/10 text-rose-900 border border-rose-500/30 hover:bg-rose-500/20">Limpar dados salvos</button>
-      <button id="btnCSV" class="px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-900 border border-emerald-500/30 hover:bg-emerald-500/20">Exportar atividades (CSV)</button>
+      <button id="btnVoltar" class="px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50">← Voltar ao formulário</button>
+      <button id="btnLimpar" class="px-4 py-2 rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100">Limpar dados salvos</button>
+      <button id="btnCSV" class="px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100">Exportar atividades (CSV)</button>
     </section>
   </main>
 
   <script>
-    /* ===== Ambiente ===== */
     const isGithubPages = location.hostname.endsWith('github.io');
     const formURL = isGithubPages ? 'index.html' : '/form';
-
-    /* ===== Helpers ===== */
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
-    const pctFmt = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
-    function pctItem(v){
-      if (v === null || v === undefined) return '—';
-      const s = String(v).trim();
-      if (s === '' || s.toUpperCase() === 'NA') return 'NA';
-      const clean = s.replace('%','').replace(',','.');
-      const num = Number(clean);
-      return isNaN(num) ? s : pctFmt(num);
-    }
-    const safeGet = (obj, path, fallback=null) =>
-      path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
-
-    const $ = id => document.getElementById(id);
-    function showMsg(text){
-      $('msgText').textContent = text;
-      $('msgBox').classList.remove('hidden');
+    const pct = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
+    function safeGet(obj, path, fallback=null){
+      return path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
     }
 
-    /* ===== Carregar análise ===== */
+    // ===== Carregar análise
     let data = null;
     try {
       const saved = localStorage.getItem('analiseTributaria');
-      if (saved) data = JSON.parse(saved);
-    } catch(e){
-      console.error('Falha ao ler analiseTributaria:', e);
+      if (!saved) {
+        alert('Nenhuma análise encontrada. Volte ao formulário para gerar os dados.');
+        location.href = formURL;
+      } else {
+        data = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Não foi possível ler os dados salvos. Voltando ao formulário.');
+      location.href = formURL;
     }
+    if(!data) data = {};
 
-    if(!data){
-      showMsg('Nenhuma análise encontrada nesta origem. Gere os dados pelo formulário e tente novamente.');
-    }
-
-    /* ===== Se ainda não houver dados, cria um dummy para validar a UI (opcional) ===== */
-    if(!data){
-      data = {
-        empresa:{nome:'Empresa Exemplo', cnpj:'—', municipio:'—', tipo:'abertura', cnae_form:'62.02-3-00',
-          outra_empresa:{ eh_socio:true, percentual_participacao:25, faturamento_anual:600000 }},
-        calculo:{ base_utilizada: 800000, melhor_regime: 'Simples',
-          simples:{ imposto:120000, aliquota_fmt:'15,00%', itens:[
-            { tributo:'IRPJ', aliquota_pct:'4.80', valor: 38400 },
-            { tributo:'CSLL', aliquota_pct:'2.88', valor: 23040 },
-            { tributo:'PIS/COFINS/ISS', aliquota_pct:'7.32', valor: 58560 },
-          ]},
-          presumido:{ imposto:150000, aliquota_fmt:'18,75%', itens:[
-            { tributo:'IRPJ', aliquota_pct:'8.00', valor: 64000 },
-            { tributo:'CSLL', aliquota_pct:'3.70', valor: 29600 },
-            { tributo:'PIS', aliquota_pct:'0.65', valor: 5200 },
-            { tributo:'COFINS', aliquota_pct:'3.00', valor: 24000 },
-            { tributo:'ISS', aliquota_pct:'3.00', valor: 24000 },
-          ]},
-          economia_fmt: 'R$ 30.000,00'
-        },
-        atividades:{itens:[
-          {nome:'Serviços', receita_12m:500000, estimativa_proximo_ano:550000, exportacao:false},
-          {nome:'Consultoria', receita_12m:300000, estimativa_proximo_ano:320000, exportacao:true},
-        ], totais_exportacao:{receita_12m:300000, estimativa_prox_ano:320000, receita_12m_fmt:'R$ 300.000,00', estimativa_prox_ano_fmt:'R$ 320.000,00'}}
-      };
-    }
-
-    /* ===== Cabeçalhos ===== */
-    $('empresaNome').textContent = safeGet(data,'empresa.nome','-');
-    $('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
-    $('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
-    $('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
-    $('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
+    // ===== Cabeçalhos
+    document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
+    document.getElementById('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
+    document.getElementById('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
+    document.getElementById('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
+    document.getElementById('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
     const regAtual = safeGet(data,'empresa.regime_atual', null);
-    if(regAtual) $('regimeAtual').textContent = 'Regime atual: ' + regAtual;
+    if(regAtual) document.getElementById('regimeAtual').textContent = 'Regime atual: ' + regAtual;
     const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
-    $('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
+    document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
-    /* ===== Outra empresa ===== */
+    // ===== Outra empresa (se existir)
     const outra = safeGet(data, 'empresa.outra_empresa', null);
     if (outra && typeof outra === 'object') {
-      $('outraEmpresaSec').style.display = 'grid';
-      $('ehSocio').textContent = outra.eh_socio ? 'Sim' : 'Não';
-      $('pctSocio').textContent = outra.percentual_participacao != null ? pctFmt(outra.percentual_participacao) : '—';
-      $('fatOutra').textContent = outra.faturamento_anual != null ? brl(outra.faturamento_anual) : '—';
+      document.getElementById('outraEmpresaSec').style.display = 'grid';
+      document.getElementById('ehSocio').textContent = outra.eh_socio ? 'Sim' : 'Não';
+      document.getElementById('pctSocio').textContent = outra.percentual_participacao != null ? pct(outra.percentual_participacao) : '—';
+      document.getElementById('fatOutra').textContent = outra.faturamento_anual != null ? brl(outra.faturamento_anual) : '—';
     }
 
     /* ===== KPIs ===== */
     const base = Number(safeGet(data,'calculo.base_utilizada',0)) || 0;
     const mediaMensal = base / 12.0;
 
-    $('kpiBase').textContent  = brl(base);
-    $('kpiMediaMensal').textContent = brl(mediaMensal);
-    $('kpiAliqS').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
-    $('kpiAliqP').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
-    $('kpiMelhor').textContent= safeGet(data,'calculo.melhor_regime','—');
-    $('kpiEconomia').textContent = 'Economia estimada: ' + safeGet(data,'calculo.economia_fmt','—');
+    // totais absolutos (reuso nos gráficos)
+    const vS = Number(safeGet(data,'calculo.simples.imposto',0)) || 0;
+    const vP = Number(safeGet(data,'calculo.presumido.imposto',0)) || 0;
 
+    // alíquotas do backend
+    const aS_num = Number(safeGet(data,'calculo.simples.aliquota_num', NaN));
+    const aP_num = Number(safeGet(data,'calculo.presumido.aliquota_num', NaN));
+    const aS_fmt_back = safeGet(data,'calculo.simples.aliquota_fmt', null);
+    const aP_fmt_back = safeGet(data,'calculo.presumido.aliquota_fmt', null);
+
+    const pctBR = n => n.toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
+
+    // 1) usa *_num (fração), 2) senão imposto/base, 3) fallback fmt
+    function effAliqSmart(imposto, base, numFromBack, fmtBack){
+      if (Number.isFinite(numFromBack)) return pctBR(numFromBack*100);
+      if (base > 0 && Number.isFinite(imposto)) {
+        const x = (imposto / base) * 100;
+        if (Number.isFinite(x)) return pctBR(x);
+      }
+      return (typeof fmtBack === 'string' && fmtBack.trim()) ? fmtBack : '—';
+    }
+
+    document.getElementById('kpiBase').textContent       = brl(base);
+    document.getElementById('kpiMediaMensal').textContent= brl(mediaMensal);
+    document.getElementById('kpiAliqS').textContent      = effAliqSmart(vS, base, aS_num, aS_fmt_back);
+    document.getElementById('kpiAliqP').textContent      = effAliqSmart(vP, base, aP_num, aP_fmt_back);
+    document.getElementById('kpiMelhor').textContent     = safeGet(data,'calculo.melhor_regime','—');
+    document.getElementById('kpiEconomia').textContent   = 'Economia estimada: ' + safeGet(data,'calculo.economia_fmt','—');
+
+    // Fator R (se vier)
     const fatorRFlag = safeGet(data, 'calculo.inputs_normalizados.fator_r_efetivo', null);
     if (fatorRFlag !== null) {
-      $('kpiFatorR').innerHTML = fatorRFlag
+      document.getElementById('kpiFatorR').innerHTML = fatorRFlag
         ? '<span class="ok">Fator R ≥ 28% (encaixa em Anexo III)</span>'
         : '<span class="warn">Fator R &lt; 28% (encaixa em Anexo V)</span>';
     }
 
-    /* ===== Gráficos ===== */
-    const vS = Number(safeGet(data,'calculo.simples.imposto',0)) || 0;
-    const vP = Number(safeGet(data,'calculo.presumido.imposto',0)) || 0;
+    // ===== Gráficos
+    const ctxBar = document.getElementById('chartBarras').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['Simples', 'Presumido'],
+        datasets: [{
+          label: 'Impostos (R$)',
+          data: [vS, vP],
+          backgroundColor: ['#60a5fa','#f87171'],
+          borderColor: ['#3b82f6','#ef4444'],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
+      }
+    });
 
-    try {
-      const ctxBar = document.getElementById('chartBarras').getContext('2d');
-      new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-          labels: ['Simples', 'Presumido'],
-          datasets: [{
-            label: 'Impostos (R$)',
-            data: [vS, vP],
-            backgroundColor: ['#06b6d4','#fb7185'],  /* cyan & rose */
-            borderColor: ['#0891b2','#f43f5e'],
-            borderWidth: 1,
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => brl(c.raw) } } },
-          scales: { y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR') } } }
-        }
-      });
+    const ctxPie = document.getElementById('chartPizza').getContext('2d');
+    new Chart(ctxPie, {
+      type: 'doughnut',
+      data: {
+        labels: ['Simples','Presumido'],
+        datasets: [{ data:[vS,vP], backgroundColor:['#60a5fa','#f87171'] }]
+      },
+      options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
+    });
 
-      const ctxPie = document.getElementById('chartPizza').getContext('2d');
-      new Chart(ctxPie, {
-        type: 'doughnut',
-        data: {
-          labels: ['Simples','Presumido'],
-          datasets: [{ data:[vS,vP], backgroundColor:['#06b6d4','#fb7185'], borderColor:['#0891b2','#f43f5e'] }]
-        },
-        options: { plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: c => `${c.label}: ${brl(c.raw)}` } } } }
-      });
-    } catch(e){
-      console.warn('Falha ao renderizar gráficos:', e);
-    }
-
-    /* ===== Detalhamento por regime ===== */
-    function fillItens(tbodyId, itens) {
-      const tb = $(tbodyId);
-      if (!tb) return;
-      tb.innerHTML = '';
-      (itens||[]).forEach(it=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${it.tributo || '-'}</td>
-          <td>${pctItem(it.aliquota_pct)}</td>
-          <td>${brl(it.valor || 0)}</td>
-        `;
-        tb.appendChild(tr);
-      });
-    }
-
-    $('simplesAliqEff').textContent = safeGet(data,'calculo.simples.aliquota_fmt','—');
-    fillItens('tbSimples', safeGet(data,'calculo.simples.itens', []));
-    $('totSimples').textContent = brl(vS);
-
-    $('presumidoAliqEff').textContent = safeGet(data,'calculo.presumido.aliquota_fmt','—');
-    fillItens('tbPresumido', safeGet(data,'calculo.presumido.itens', []));
-    $('totPresumido').textContent = brl(vP);
-
-    /* ===== Tabela de atividades ===== */
-    const tbAtv = $('tbodyAtividades');
-    const itensAtv = safeGet(data,'atividades.itens',[]) || [];
-    tbAtv.innerHTML = '';
-    itensAtv.forEach(it=>{
+    // ===== Tabela de atividades
+    const tb = document.getElementById('tbodyAtividades');
+    const itens = safeGet(data,'atividades.itens',[]) || [];
+    tb.innerHTML = '';
+    itens.forEach(it=>{
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${it.nome||'-'}</td>
         <td>${brl(it.receita_12m||0)}</td>
         <td>${brl(it.estimativa_proximo_ano||0)}</td>
         <td>${it.exportacao ? 'Sim':'Não'}</td>`;
-      tbAtv.appendChild(tr);
+      tb.appendChild(tr);
     });
     const tot = safeGet(data,'atividades.totais_exportacao',null);
     if(tot){
-      $('totaisExport').innerHTML =
+      document.getElementById('totaisExport').innerHTML =
         `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
     }
 
-    /* ===== Ações ===== */
-    $('btnVoltar').addEventListener('click', ()=>{ location.href = formURL; });
-    $('btnLimpar').addEventListener('click', ()=>{
+    // ===== Ações
+    document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = formURL; });
+    document.getElementById('btnLimpar').addEventListener('click', ()=>{
       localStorage.removeItem('analiseTributaria');
       alert('Dados limpos. Voltando ao formulário.');
       location.href = formURL;
     });
-    $('btnCSV').addEventListener('click', ()=>{
+    document.getElementById('btnCSV').addEventListener('click', ()=>{
       const rows = [['Atividade','Receita 12m','Estimativa Próx. Ano','Exportação']];
-      itensAtv.forEach(it=> rows.push([ it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não' ]));
-      const csv = rows.map(r=> r.map(v=> `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+      itens.forEach(it=> rows.push([ it.nome||'', (it.receita_12m||0), (it.estimativa_proximo_ano||0), it.exportacao?'Sim':'Não' ]));
+      const csv = rows.map(r=> r.map(v=> {
+        const s = String(v).replace(/"/g,'""'); return `"${s}"`;
+      }).join(',')).join('\n');
       const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'atividades.csv'; a.click(); URL.revokeObjectURL(a.href);
     });
