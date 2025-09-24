@@ -134,9 +134,14 @@
           <label class="text-sm font-medium text-gray-700">Pró-labore Ideal (R$)</label>
           <input type="text" id="prolabore_ideal" required inputmode="decimal" class="mt-1 p-3 border border-gray-300 rounded-md" data-compact-preview data-money-mask>
         </div>
+
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">ICMS (%)</label>
-          <input type="number" id="icms" required step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input type="text" id="icms" required inputmode="decimal"
+                 class="mt-1 p-3 border border-gray-300 rounded-md"
+                 placeholder="Ex.: 3"
+                 data-percent-mask>
+          <div class="compact-hint">Digite em % (ex.: <b>3</b> = 3%)</div>
         </div>
 
         <div class="flex flex-col">
@@ -191,12 +196,12 @@
     </div>
   </div>
 
-  <!-- Scripts (DEIXE NO FINAL) -->
+  <!-- Scripts -->
   <script>
-    // ===== CONFIG: sua API
+    // ===== CONFIG
     const apiUrlBase = "http://127.0.0.1:8000";
 
-    // ===== Navegação básica
+    // ===== Navegação
     const splashPage = document.getElementById('splashPage');
     const empresaFormPage = document.getElementById('empresaFormPage');
     const pessoaFisicaFormPage = document.getElementById('pessoaFisicaFormPage');
@@ -214,7 +219,7 @@
     btnPessoaFisica?.addEventListener('click', ()=>showPage('pessoaFisicaFormPage'));
     backToSplash1?.addEventListener('click', ()=>showPage('splashPage'));
 
-    // ===== Mostrar campos de “sócio de outra empresa”
+    // ===== Sócio outra empresa
     const socioOutra = document.getElementById('socio_outra_empresa');
     const wrapPercentual = document.getElementById('wrap_percentual');
     const wrapFatOutra = document.getElementById('wrap_fat_outra');
@@ -226,7 +231,7 @@
     socioOutra.addEventListener('change', toggleSocioCampos);
     toggleSocioCampos();
 
-    // ===== Regime a comparar
+    // ===== Comparar
     const compararButtons = document.querySelectorAll('.comparar-btn');
     const compararInput = document.getElementById('comparar');
     function setCompararActive(btn) {
@@ -257,7 +262,7 @@
       anexoHint.textContent = hintText || "";
     }
 
-    // ===== CNAE → sugere Anexo (usa RBT12 e Folha*12)
+    // ===== CNAE → sugere Anexo
     const cnaeInput  = document.getElementById('cnae');
     const rbt12El    = document.getElementById('rbt12');
     const folhaEl    = document.getElementById('folha');
@@ -297,7 +302,7 @@
     rbt12El && rbt12El.addEventListener('change', sugerirAnexoPorCNAE);
     folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
 
-    // ===== Preview compacto (≈ 5M)
+    // ===== Helpers numéricos (BR)
     const nfCompactPT = new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 2 });
     function formatCompactBR(n){
       if (!isFinite(n) || n === 0) return '';
@@ -308,16 +313,12 @@
         .replace(/\s*tri\b/i, 'T');
     }
 
-    // ===== Máscara BR de dinheiro (ponto milhar, vírgula decimal)
     function maskMoney(value) {
       if (value == null) return '';
-      // remove tudo que não é dígito ou vírgula
       let s = String(value).replace(/[^\d,]/g, '');
-      // se tiver mais de uma vírgula, mantém só a primeira
       const parts = s.split(',');
-      let intPart = parts[0].replace(/^0+(?=\d)/, ''); // remove zeros à esquerda
+      let intPart = parts[0].replace(/^0+(?=\d)/, '');
       let decPart = parts[1] ? parts[1].slice(0, 2) : '';
-      // formata milhares com ponto
       intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
       return decPart ? `${intPart},${decPart}` : intPart;
     }
@@ -327,17 +328,14 @@
       return isNaN(num) ? 0 : num;
     }
     function attachMoneyMask(input){
-      // teclado numérico no mobile já está setado por inputmode="decimal"
       const update = ()=>{
         const caret = input.selectionStart;
         const before = input.value;
         input.value = maskMoney(before);
-        // ajuste simples do caret (não perfeito, mas evita pular para o fim em edições curtas)
         const diff = input.value.length - before.length;
         if (document.activeElement === input && typeof caret === 'number') {
           input.setSelectionRange(Math.max(0, caret + diff), Math.max(0, caret + diff));
         }
-        // atualiza hint compacto se existir
         const hint = input.nextElementSibling;
         if (hint && hint.classList.contains('compact-hint')) {
           const n = parseBR(input.value);
@@ -346,14 +344,47 @@
       };
       input.addEventListener('input', update);
       input.addEventListener('change', update);
-      // formata valor inicial (se vier pré-preenchido)
       update();
     }
 
-    // inicializa máscaras/preview nos inputs marcados
-    document.querySelectorAll('input[data-money-mask]').forEach(attachMoneyMask);
+    // % BR
+    function maskPercent(value){
+      if (value == null) return '';
+      let s = String(value).replace(/[^\d,]/g, '');
+      const parts = s.split(',');
+      let intPart = parts[0].replace(/^0+(?=\d)/, '');
+      let decPart = parts[1] ? parts[1].slice(0, 2) : '';
+      intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      const out = decPart ? `${intPart},${decPart}` : intPart;
+      return out ? `${out}%` : '';
+    }
+    function parsePercentBR(s){
+      if (!s) return 0;
+      const clean = String(s).replace('%','').trim();
+      const num = parseFloat(clean.replace(/\./g,'').replace(',','.'));
+      if (isNaN(num)) return 0;
+      return num / 100.0;
+    }
+    function attachPercentMask(input){
+      const update = ()=>{
+        const before = input.value;
+        const caret = input.selectionStart;
+        const noPct = before.replace('%','');
+        input.value = maskPercent(noPct);
+        if (document.activeElement === input && typeof caret === 'number') {
+          const diff = input.value.length - before.length;
+          input.setSelectionRange(Math.max(0, caret + diff), Math.max(0, caret + diff));
+        }
+      };
+      input.addEventListener('input', update);
+      input.addEventListener('change', update);
+      update();
+    }
 
-    // ===== Preview compacto (usa parseBR agora)
+    // inicializadores
+    document.querySelectorAll('input[data-money-mask]').forEach(attachMoneyMask);
+    document.querySelectorAll('input[data-percent-mask]').forEach(attachPercentMask);
+
     function attachCompactPreview(input){
       let hint = input.nextElementSibling;
       if (!hint || !hint.classList.contains('compact-hint')) {
@@ -395,7 +426,10 @@
         prolabore_ideal: parseBR(document.getElementById('prolabore_ideal').value),
         tem_funcionarios: document.getElementById('tem_funcionarios').value,
         folha: parseBR(document.getElementById('folha').value),
-        icms: parseFloat(document.getElementById('icms').value || '0'),
+
+        // ICMS em FRAÇÃO (3% -> 0.03)
+        icms: parsePercentBR(document.getElementById('icms').value || '0'),
+
         empresa_constituida: (document.getElementById('tipo_empresa').value === 'constituida'),
       };
     }
@@ -447,12 +481,12 @@
           statusMessage.textContent = `Erro (${resp.status}): ${text}`;
           return;
         }
-        const { nome_arquivo } = await resp.json();
+        const { file, download_url_query, download_url_path } = await resp.json();
         const a = document.createElement('a');
-        a.href = `${apiUrlBase}/baixar-planilha/${nome_arquivo}`;
-        a.setAttribute('download', nome_arquivo);
+        a.href = `${apiUrlBase}${download_url_path}`;
+        a.setAttribute('download', file);
         document.body.appendChild(a); a.click(); a.remove();
-        statusMessage.textContent = `Download da planilha "${nome_arquivo}" iniciado.`;
+        statusMessage.textContent = `Download da planilha "${file}" iniciado.`;
       }catch(e){
         statusMessage.textContent = `Erro de rede: ${e.message}`;
       }finally{
