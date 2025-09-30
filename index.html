@@ -261,7 +261,7 @@
       anexoHint.textContent = hintText || "";
     }
 
-    // ===== Máscara BR (5.000 / 50.000,50) =====
+    // ===== Máscara BR (5.000 / 50.000,50)
     function formatBRIntWithDots(intStr){
       intStr = intStr.replace(/^0+(?=\d)/, '');
       return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -310,7 +310,8 @@
         const json = await resp.json();
 
         const possiveis = (json.anexos_possiveis || []).join(' / ');
-        const dica = `CNAE ${json.cnae}: ${json.descricao} • Possíveis: ${possiveis}${json.fator_r ? ' (Fator R)' : ''}. Sugerido: ${json.sugestao_anexo}.`;
+        const pres = json.presuncao_lp ? ` • Presunção LP: ${json.presuncao_lp}` : '';
+        const dica = `CNAE ${json.cnae}: ${json.descricao} • Possíveis: ${possiveis}${json.fator_r ? ' (Fator R)' : ''}. Sugerido: ${json.sugestao_anexo}.${pres}`;
         setAnexoValue(json.sugestao_anexo, dica);
 
         anexoSelect.disabled = true;
@@ -329,6 +330,7 @@
 
     // ===== Payload
     function montarPayload(){
+      const folhaMensal = parseBRNumber(document.getElementById('folha').value);
       return {
         nome_empresa: document.getElementById('nome_empresa').value || '',
         cnpj: document.getElementById('cnpj').value || null,
@@ -353,7 +355,10 @@
         comparar: document.getElementById('comparar').value || '',
         prolabore_ideal: parseBRNumber(document.getElementById('prolabore_ideal').value),
         tem_funcionarios: document.getElementById('tem_funcionarios').value,
-        folha: parseBRNumber(document.getElementById('folha').value),
+        folha: folhaMensal,
+
+        // >>> novo: envia folha total de 12 meses para Fator R (se existir)
+        folha_12m_total: folhaMensal * 12,
 
         // >>> NÃO enviamos 'icms' (ISS é automático no back)
       };
