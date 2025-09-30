@@ -1,0 +1,2490 @@
+[
+  {
+    "cnae": "32.50-7-06",
+    "descricao": "Serviços de prótese dentária",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "32.50-7-09",
+    "descricao": "Serviço de laboratório óptico",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "43.99-1-01",
+    "descricao": "Administração de obras",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "45.12-9-01",
+    "descricao": "Representantes comerciais e agentes do comércio de veículos automotores",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "45.30-7-02",
+    "descricao": "Comércio por atacado de pneumáticos e câmaras-de-ar",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.30-7-03",
+    "descricao": "Comércio a varejo de peças e acessórios novos para veículos automotores",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.30-7-04",
+    "descricao": "Comércio a varejo de peças e acessórios usados para veículos automotores",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.30-7-05",
+    "descricao": "Comércio a varejo de pneumáticos e câmaras-de-ar",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.30-7-06",
+    "descricao": "Representantes comerciais e agentes do comércio de peças e acessórios novos e usados para veículos automotores",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "45.41-2-02",
+    "descricao": "Comércio por atacado de peças e acessórios para motocicletas e motonetas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.41-2-06",
+    "descricao": "Comércio a varejo de peças e acessórios novos para motocicletas e motonetas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.41-2-07",
+    "descricao": "Comércio a varejo de peças e acessórios usados para motocicletas e motonetas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "45.42-1-01",
+    "descricao": "Representantes comerciais e agentes do comércio de motocicletas e motonetas, peças e acessórios",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.11-7-00",
+    "descricao": "Representantes comerciais e agentes do comércio de matérias-primas agrícolas e animais vivos",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.12-5-00",
+    "descricao": "Representantes comerciais e agentes do comércio de combustíveis, minerais, produtos siderúrgicos e químicos",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.13-3-00",
+    "descricao": "Representantes comerciais e agentes do comércio de madeira, material de construção e ferragens",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.14-1-00",
+    "descricao": "Representantes comerciais e agentes do comércio de máquinas, equipamentos, embarcações e aeronaves",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.15-0-00",
+    "descricao": "Representantes comerciais e agentes do comércio de eletrodomésticos, móveis e artigos de uso doméstico",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.16-8-00",
+    "descricao": "Representantes comerciais e agentes do comércio de têxteis, vestuário, calçados e artigos de viagem",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.17-6-00",
+    "descricao": "Representantes comerciais e agentes do comércio de produtos alimentícios, bebidas e fumo",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.18-4-01",
+    "descricao": "Representantes comerciais e agentes do comércio de medicamentos, cosméticos e produtos de perfumaria",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.18-4-02",
+    "descricao": "Representantes comerciais e agentes do comércio de instrumentos e materiais odonto-médico-hospitalares",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.18-4-03",
+    "descricao": "Representantes comerciais e agentes do comércio de jornais, revistas e outras publicações",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.18-4-99",
+    "descricao": "Outros representantes comerciais e agentes do comércio especializado em produtos não especificados anteriormente",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "46.19-2-00",
+    "descricao": "Representantes comerciais e agentes do comércio de mercadorias em geral não especializado",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "47.11-3-01",
+    "descricao": "Comércio varejista de mercadorias em geral, com predominância de produtos alimentícios – hipermercados",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.11-3-02",
+    "descricao": "Comércio varejista de mercadorias em geral, com predominância de produtos alimentícios – supermercados",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.12-1-00",
+    "descricao": "Comércio varejista de mercadorias em geral, com predominância de produtos alimentícios – minimercados, mercearias e armazéns",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.13-0-02",
+    "descricao": "Lojas de variedades, exceto lojas de departamentos ou magazines",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.13-0-04",
+    "descricao": "Lojas de departamentos ou magazines, exceto lojas francas (Duty free)",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.21-1-02",
+    "descricao": "Padaria e confeitaria com predominância de revenda",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.21-1-03",
+    "descricao": "Comércio varejista de laticínios e frios",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.21-1-04",
+    "descricao": "Comércio varejista de doces, balas, bombons e semelhantes",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.23-7-00",
+    "descricao": "Comércio varejista de bebidas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.24-5-00",
+    "descricao": "Comércio varejista de hortifrutigranjeiros",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.29-6-01",
+    "descricao": "Tabacaria",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.29-6-99",
+    "descricao": "Comércio varejista de produtos alimentícios em geral ou especializado em produtos alimentícios não especificados anteriormente",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.43-1-00",
+    "descricao": "Comércio varejista de vidros",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.44-0-02",
+    "descricao": "Comércio varejista de madeira e artefatos",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.51-2-01",
+    "descricao": "Comércio varejista especializado de equipamentos e suprimentos de informática",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.51-2-02",
+    "descricao": "Recarga de cartuchos para equipamentos de informática",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "47.52-1-00",
+    "descricao": "Comércio varejista especializado de equipamentos de telefonia e comunicação",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.53-9-00",
+    "descricao": "Comércio varejista especializado de eletrodomésticos e equipamentos de áudio e vídeo",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.54-7-01",
+    "descricao": "Comércio varejista de móveis",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.54-7-02",
+    "descricao": "Comércio varejista de artigos de colchoaria",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.54-7-03",
+    "descricao": "Comércio varejista de artigos de iluminação",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.55-5-01",
+    "descricao": "Comércio varejista de tecidos",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.55-5-02",
+    "descricao": "Comércio varejista de artigos de armarinho",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.55-5-03",
+    "descricao": "Comércio varejista de artigos de cama, mesa e banho",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.56-3-00",
+    "descricao": "Comércio varejista especializado de instrumentos musicais e acessórios",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.57-1-00",
+    "descricao": "Comércio varejista especializado de peças e acessórios para aparelhos eletroeletrônicos para uso doméstico, exceto informática e comunicação",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.59-8-01",
+    "descricao": "Comércio varejista de artigos de tapeçaria, cortinas e persianas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.59-8-99",
+    "descricao": "Comércio varejista de outros artigos de uso doméstico não especificados anteriormente",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.61-0-01",
+    "descricao": "Comércio varejista de livros",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.61-0-02",
+    "descricao": "Comércio varejista de jornais e revistas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.61-0-03",
+    "descricao": "Comércio varejista de artigos de papelaria",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.62-8-00",
+    "descricao": "Comércio varejista de discos, CDs, DVDs e fitas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.63-6-01",
+    "descricao": "Comércio varejista de brinquedos e artigos recreativos",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.63-6-02",
+    "descricao": "Comércio varejista de artigos esportivos",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.63-6-03",
+    "descricao": "Comércio varejista de bicicletas e triciclos peças e acessórios",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.63-6-04",
+    "descricao": "Comércio varejista de artigos de caça, pesca e camping",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.72-5-00",
+    "descricao": "Comércio varejista de cosméticos, produtos de perfumaria e de higiene pessoal",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.74-1-00",
+    "descricao": "Comércio varejista de artigos de óptica",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.81-4-00",
+    "descricao": "Comércio varejista de artigos do vestuário e acessórios",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.82-2-01",
+    "descricao": "Comércio varejista de calçados",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.82-2-02",
+    "descricao": "Comércio varejista de artigos de viagem",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.83-1-02",
+    "descricao": "Comércio varejista de artigos de relojoaria",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.85-7-01",
+    "descricao": "Comércio varejista de antigüidades",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.85-7-99",
+    "descricao": "Comércio varejista de outros artigos usados",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.89-0-01",
+    "descricao": "Comércio varejista de suvenires, bijuterias e artesanatos",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.89-0-02",
+    "descricao": "Comércio varejista de plantas e flores naturais",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.89-0-03",
+    "descricao": "Comércio varejista de objetos de arte",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.89-0-07",
+    "descricao": "Comércio varejista de equipamentos para escritório",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.89-0-08",
+    "descricao": "Comércio varejista de artigos fotográficos e para filmagem",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "47.89-0-99",
+    "descricao": "Comércio varejista de outros produtos não especificados anteriormente",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "56.11-2-01",
+    "descricao": "Restaurantes e similares",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "56.11-2-03",
+    "descricao": "Lanchonetes, casas de chá, de sucos e similares",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "56.11-2-04",
+    "descricao": "Bares e outros estabelecimentos especializados em servir bebidas, sem entretenimento",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "56.20-1-01",
+    "descricao": "Fornecimento de alimentos preparados preponderantemente para empresas",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "56.20-1-03",
+    "descricao": "Cantinas – serviços de alimentação privativos",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "56.20-1-04",
+    "descricao": "Fornecimento de alimentos preparados preponderantemente para consumo domiciliar",
+    "anexos": [
+      "I"
+    ],
+    "fator_r": false,
+    "natureza": "comercio"
+  },
+  {
+    "cnae": "59.11-1-01",
+    "descricao": "Estúdios cinematográficos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.11-1-02",
+    "descricao": "Produção de filmes para publicidade",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.11-1-99",
+    "descricao": "Atividades de produção cinematográfica, de vídeos e de programas de televisão não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.12-0-01",
+    "descricao": "Serviços de dublagem",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.12-0-02",
+    "descricao": "Serviços de mixagem sonora em produção audiovisual",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.12-0-99",
+    "descricao": "Atividades de pós-produção cinematográfica, de vídeos e de programas de televisão não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.13-8-00",
+    "descricao": "Distribuição cinematográfica, de vídeo e de programas de televisão",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.14-6-00",
+    "descricao": "Atividades de exibição cinematográfica",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "59.20-1-00",
+    "descricao": "Atividades de gravação de som e de edição de música",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "62.01-5-01",
+    "descricao": "Desenvolvimento de programas de computador sob encomenda",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "62.01-5-02",
+    "descricao": "Web design",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "62.02-3-00",
+    "descricao": "Desenvolvimento e licenciamento de programas de computador customizáveis",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "62.03-1-00",
+    "descricao": "Desenvolvimento e licenciamento de programas de computador não-customizáveis",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "62.04-0-00",
+    "descricao": "Consultoria em tecnologia da informação",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "62.09-1-00",
+    "descricao": "Suporte técnico, manutenção e outros serviços em tecnologia da informação",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "63.11-9-00",
+    "descricao": "Tratamento de dados, provedores de serviços de aplicação e serviços de hospedagem na internet",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "63.19-4-00",
+    "descricao": "Portais, provedores de conteúdo e outros serviços de informação na internet",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "63.91-7-00",
+    "descricao": "Agências de notícias",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "63.99-2-00",
+    "descricao": "Outras atividades de prestação de serviços de informação não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "66.12-6-05",
+    "descricao": "Agentes de investimentos em aplicações financeiras",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "66.19-3-02",
+    "descricao": "Correspondentes de instituições financeiras",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "66.21-5-01",
+    "descricao": "Peritos e avaliadores de seguros",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "66.21-5-02",
+    "descricao": "Auditoria e consultoria atuarial",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "66.22-3-00",
+    "descricao": "Corretores e agentes de seguros, de planos de previdência complementar e de saúde",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "66.29-1-00",
+    "descricao": "Atividades auxiliares dos seguros, da previdência complementar e dos planos de saúde não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "68.21-8-01",
+    "descricao": "Corretagem na compra e venda e avaliação de imóveis",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "68.21-8-02",
+    "descricao": "Corretagem no aluguel de imóveis",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "69.11-7-01",
+    "descricao": "Serviços advocatícios",
+    "anexos": [
+      "IV"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "69.11-7-02",
+    "descricao": "Atividades auxiliares da justiça",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "69.11-7-03",
+    "descricao": "Agente de propriedade industrial",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "70.20-4-00",
+    "descricao": "Atividades de consultoria em gestão empresarial, exceto consultoria técnica específica",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.11-1-00",
+    "descricao": "Serviços de arquitetura",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.12-0-00",
+    "descricao": "Serviços de engenharia",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.19-7-01",
+    "descricao": "Serviços de cartografia, topografia e geodésia",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.19-7-02",
+    "descricao": "Atividades de estudos geológicos",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.19-7-03",
+    "descricao": "Serviços de desenho técnico relacionados à arquitetura e engenharia",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.19-7-04",
+    "descricao": "Serviços de perícia técnica relacionados à segurança do trabalho",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.19-7-99",
+    "descricao": "Atividades técnicas relacionadas à engenharia e arquitetura não especificadas anteriormente",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "71.20-1-00",
+    "descricao": "Testes e análises técnicas",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "72.10-0-00",
+    "descricao": "Pesquisa e desenvolvimento experimental em ciências físicas e naturais",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "72.20-7-00",
+    "descricao": "Pesquisa e desenvolvimento experimental em ciências sociais e humanas",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.11-4-00",
+    "descricao": "Agências de publicidade",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.12-2-00",
+    "descricao": "Agenciamento de espaços para publicidade exceto em veículos de comunicação",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.19-0-01",
+    "descricao": "Criação de estandes para feiras e exposições",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.19-0-02",
+    "descricao": "Promoção de vendas",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.19-0-03",
+    "descricao": "Marketing direto",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.19-0-04",
+    "descricao": "Consultoria em publicidade",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.19-0-99",
+    "descricao": "Outras atividades de publicidade não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "73.20-3-00",
+    "descricao": "Pesquisas de mercado e de opinião pública",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.10-2-02",
+    "descricao": "Design de interiores",
+    "anexos": [
+      "IV",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.10-2-03",
+    "descricao": "Design de produto",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.10-2-99",
+    "descricao": "Atividades de design não especificadas anteriormente",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.20-0-01",
+    "descricao": "Atividades de produção de fotografias, exceto aérea e submarina",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.20-0-02",
+    "descricao": "Atividades de produção de fotografias aéreas e submarinas",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.20-0-03",
+    "descricao": "Laboratórios fotográficos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.20-0-04",
+    "descricao": "Filmagem de festas e eventos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.20-0-05",
+    "descricao": "Serviços de microfilmagem",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.90-1-01",
+    "descricao": "Serviços de tradução, interpretação e similares",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.90-1-02",
+    "descricao": "Escafandria e mergulho",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.90-1-03",
+    "descricao": "Serviços de agronomia e de consultoria às atividades agrícolas e pecuárias",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.90-1-04",
+    "descricao": "Atividades de intermediação e agenciamento de serviços e negócios em geral, exceto imobiliários",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.90-1-05",
+    "descricao": "Agenciamento de profissionais para atividades esportivas, culturais e artísticas",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "74.90-1-99",
+    "descricao": "Outras atividades profissionais, científicas e técnicas não especificadas anteriormente",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "75.00-1-00",
+    "descricao": "Atividades veterinárias",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.21-7-00",
+    "descricao": "Aluguel de equipamentos recreativos e esportivos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.22-5-00",
+    "descricao": "Aluguel de fitas de vídeo, DVDs e similares",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.23-3-00",
+    "descricao": "Aluguel de objetos do vestuário, jóias e acessórios",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.29-2-01",
+    "descricao": "Aluguel de aparelhos de jogos eletrônicos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.29-2-02",
+    "descricao": "Aluguel de móveis, utensílios e aparelhos de uso doméstico e pessoal; instrumentos musicais",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.29-2-03",
+    "descricao": "Aluguel de material médico",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.29-2-99",
+    "descricao": "Aluguel de outros objetos pessoais e domésticos não especificados anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.31-4-00",
+    "descricao": "Aluguel de máquinas e equipamentos agrícolas sem operador",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.32-2-01",
+    "descricao": "Aluguel de máquinas e equipamentos para construção sem operador, exceto andaimes",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.32-2-02",
+    "descricao": "Aluguel de andaimes",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.33-1-00",
+    "descricao": "Aluguel de máquinas e equipamentos para escritório",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.39-0-01",
+    "descricao": "Aluguel de máquinas e equipamentos para extração de minérios e petróleo, sem operador",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.39-0-02",
+    "descricao": "Aluguel de equipamentos científicos, médicos e hospitalares, sem operador",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.39-0-03",
+    "descricao": "Aluguel de palcos, coberturas e outras estruturas de uso temporário, exceto andaimes",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.39-0-99",
+    "descricao": "Aluguel de outras máquinas e equipamentos comerciais e industriais não especificados anteriormente, sem operador",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "77.40-3-00",
+    "descricao": "Gestão de ativos intangíveis não-financeiros",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "79.11-2-00",
+    "descricao": "Agências de viagens",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "79.12-1-00",
+    "descricao": "Operadores turísticos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "79.90-2-00",
+    "descricao": "Serviços de reservas e outros serviços de turismo não especificados anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "80.11-1-02",
+    "descricao": "Serviços de adestramento de cães de guarda",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "80.30-7-00",
+    "descricao": "Atividades de investigação particular",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "81.21-4-00",
+    "descricao": "Limpeza em prédios e em domicílios",
+    "anexos": [
+      "IV"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "81.22-2-00",
+    "descricao": "Imunização e controle de pragas urbanas",
+    "anexos": [
+      "IV"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "81.29-0-00",
+    "descricao": "Atividades de limpeza não especificadas anteriormente",
+    "anexos": [
+      "IV"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "81.30-3-00",
+    "descricao": "Atividades paisagísticas",
+    "anexos": [
+      "IV"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.11-3-00",
+    "descricao": "Serviços combinados de escritório e apoio administrativo",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.19-9-99",
+    "descricao": "Preparação de documentos e serviços especializados de apoio administrativo não especificados anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.20-2-00",
+    "descricao": "Atividades de teleatendimento",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.30-0-01",
+    "descricao": "Serviços de organização de feiras, congressos, exposições e festas",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.30-0-02",
+    "descricao": "Casas de festas e eventos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.91-1-00",
+    "descricao": "Atividades de cobrança e informações cadastrais",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.99-7-01",
+    "descricao": "Medição de consumo de energia elétrica, gás e água",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.99-7-03",
+    "descricao": "Serviços de gravação de carimbos, exceto confecção",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.99-7-07",
+    "descricao": "Salas de acesso à internet",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "82.99-7-99",
+    "descricao": "Outras atividades de serviços prestados principalmente às empresas não especificadas anteriormente",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.11-2-00",
+    "descricao": "Educação infantil – creche",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.12-1-00",
+    "descricao": "Educação infantil – pré-escola",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.13-9-00",
+    "descricao": "Ensino fundamental",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.20-1-00",
+    "descricao": "Ensino médio",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.31-7-00",
+    "descricao": "Educação superior – graduação",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.32-5-00",
+    "descricao": "Educação superior – graduação e pós-graduação",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.33-3-00",
+    "descricao": "Educação superior – pós-graduação e extensão",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.41-4-00",
+    "descricao": "Educação profissional de nível técnico",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.42-2-00",
+    "descricao": "Educação profissional de nível tecnológico",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.50-3-02",
+    "descricao": "Atividades de apoio à educação, exceto caixas escolares",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.91-1-00",
+    "descricao": "Ensino de esportes",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.92-9-01",
+    "descricao": "Ensino de dança",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.92-9-02",
+    "descricao": "Ensino de artes cênicas, exceto dança",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.92-9-03",
+    "descricao": "Ensino de música",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.92-9-99",
+    "descricao": "Ensino de arte e cultura não especificado anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.93-7-00",
+    "descricao": "Ensino de idiomas",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.99-6-03",
+    "descricao": "Treinamento em informática",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.99-6-04",
+    "descricao": "Treinamento em desenvolvimento profissional e gerencial",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.99-6-05",
+    "descricao": "Cursos preparatórios para concursos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "85.99-6-99",
+    "descricao": "Outras atividades de ensino não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.10-1-01",
+    "descricao": "Atividades de atendimento hospitalar, exceto pronto-socorro e unidades para atendimento a urgências",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-01",
+    "descricao": "Atividade médica ambulatorial com recursos para realização de procedimentos cirúrgicos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-02",
+    "descricao": "Atividade médica ambulatorial com recursos para realização de exames complementares",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-03",
+    "descricao": "Atividade médica ambulatorial restrita a consultas",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-04",
+    "descricao": "Atividade odontológica",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-06",
+    "descricao": "Serviços de vacinação e imunização humana",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-07",
+    "descricao": "Atividades de reprodução humana assistida",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.30-5-99",
+    "descricao": "Atividades de atenção ambulatorial não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-01",
+    "descricao": "Laboratórios de anatomia patológica e citológica",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-02",
+    "descricao": "Laboratórios clínicos",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-03",
+    "descricao": "Serviços de diálise e nefrologia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-04",
+    "descricao": "Serviços de tomografia",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-05",
+    "descricao": "Serviços de diagnóstico por imagem com uso de radiação ionizante, exceto tomografia",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-06",
+    "descricao": "Serviços de ressonância magnética",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-07",
+    "descricao": "Serviços de diagnóstico por imagem sem uso de radiação ionizante, exceto ressonância magnética",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-08",
+    "descricao": "Serviços de diagnóstico por registro gráfico – ECG, EEG e outros exames análogos",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-09",
+    "descricao": "Serviços de diagnóstico por métodos ópticos – endoscopia e outros exames análogos",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-10",
+    "descricao": "Serviços de quimioterapia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-11",
+    "descricao": "Serviços de radioterapia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-12",
+    "descricao": "Serviços de hemoterapia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-13",
+    "descricao": "Serviços de litotripsia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-14",
+    "descricao": "Serviços de bancos de células e tecidos humanos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.40-2-99",
+    "descricao": "Atividades de serviços de complementação diagnóstica e terapêutica não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-01",
+    "descricao": "Atividades de enfermagem",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-02",
+    "descricao": "Atividades de profissionais da nutrição",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-03",
+    "descricao": "Atividades de psicologia e psicanálise",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-04",
+    "descricao": "Atividades de fisioterapia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-05",
+    "descricao": "Atividades de terapia ocupacional",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-06",
+    "descricao": "Atividades de fonoaudiologia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-07",
+    "descricao": "Atividades de terapia de nutrição enteral e parenteral",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.50-0-99",
+    "descricao": "Atividades de profissionais da área de saúde não especificadas anteriormente",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.60-7-00",
+    "descricao": "Atividades de apoio à gestão de saúde",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.90-9-01",
+    "descricao": "Atividades de práticas integrativas e complementares em saúde humana",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.90-9-03",
+    "descricao": "Atividades de acupuntura",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.90-9-04",
+    "descricao": "Atividades de podologia",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "86.90-9-99",
+    "descricao": "Outras atividades de atenção à saúde humana não especificadas anteriormente",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-01",
+    "descricao": "Produção teatral",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-02",
+    "descricao": "Produção musical",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-03",
+    "descricao": "Produção de espetáculos de dança",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-04",
+    "descricao": "Produção de espetáculos circenses, de marionetes e similares",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-05",
+    "descricao": "Produção de espetáculos de rodeios, vaquejadas e similares",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-06",
+    "descricao": "Atividades de sonorização e de iluminação",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.01-9-99",
+    "descricao": "Artes cênicas, espetáculos e atividades complementares não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.02-7-01",
+    "descricao": "Atividades de artistas plásticos, jornalistas independentes e escritores",
+    "anexos": [
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "90.02-7-02",
+    "descricao": "Restauração de obras de arte",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.11-5-00",
+    "descricao": "Gestão de instalações de esportes",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.13-1-00",
+    "descricao": "Atividades de condicionamento físico",
+    "anexos": [
+      "III",
+      "V"
+    ],
+    "fator_r": true,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.19-1-01",
+    "descricao": "Produção e promoção de eventos esportivos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.19-1-99",
+    "descricao": "Outras atividades esportivas não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.29-8-02",
+    "descricao": "Exploração de boliches",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.29-8-03",
+    "descricao": "Exploração de jogos de sinuca, bilhar e similares",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.29-8-04",
+    "descricao": "Exploração de jogos eletrônicos recreativos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "93.29-8-99",
+    "descricao": "Outras atividades de recreação e lazer não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.11-8-00",
+    "descricao": "Reparação e manutenção de computadores e de equipamentos periféricos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.12-6-00",
+    "descricao": "Reparação e manutenção de equipamentos de comunicação",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.21-5-00",
+    "descricao": "Reparação e manutenção de equipamentos eletroeletrônicos de uso pessoal e doméstico",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-01",
+    "descricao": "Reparação de calçados, bolsas e artigos de viagem",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-02",
+    "descricao": "Chaveiros",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-03",
+    "descricao": "Reparação de relógios",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-04",
+    "descricao": "Reparação de bicicletas, triciclos e outros veículos não-motorizados",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-05",
+    "descricao": "Reparação de artigos do mobiliário",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-06",
+    "descricao": "Reparação de jóias",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "95.29-1-99",
+    "descricao": "Reparação e manutenção de outros objetos e equipamentos pessoais e domésticos não especificados anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.01-7-01",
+    "descricao": "Lavanderias",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.01-7-02",
+    "descricao": "Tinturarias",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.01-7-03",
+    "descricao": "Toalheiros",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.02-5-01",
+    "descricao": "Cabeleireiros, manicure e pedicure",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.02-5-02",
+    "descricao": "Atividades de Estética e outros serviços de cuidados com a beleza",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.09-2-02",
+    "descricao": "Agências matrimoniais",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.09-2-05",
+    "descricao": "Atividades de sauna e banhos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.09-2-06",
+    "descricao": "Serviços de tatuagem e colocação de piercing",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.09-2-07",
+    "descricao": "Alojamento de animais domésticos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.09-2-08",
+    "descricao": "Higiene e embelezamento de animais domésticos",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  },
+  {
+    "cnae": "96.09-2-99",
+    "descricao": "Outras atividades de serviços pessoais não especificadas anteriormente",
+    "anexos": [
+      "III"
+    ],
+    "fator_r": false,
+    "natureza": "servicos"
+  }
+]
