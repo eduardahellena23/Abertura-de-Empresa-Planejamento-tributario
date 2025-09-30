@@ -54,6 +54,10 @@
         <div class="muted text-xs">CNAE</div>
         <div id="empresaCNAE" class="text-lg font-semibold"></div>
         <div id="flagsCNAE" class="muted text-xs"></div>
+        <div class="mt-2">
+          <span class="muted text-xs">Anexo sugerido</span>
+          <div id="chipAnexo" class="chip inline-block mt-1">—</div>
+        </div>
       </div>
     </section>
 
@@ -243,9 +247,12 @@
       tb.innerHTML = '';
       (itens||[]).forEach(it=>{
         const tr = document.createElement('tr');
+        const aliq = it.aliquota_pct;
+        const aliqFmt = (aliq==null || aliq==='NA') ? '—' :
+                        (String(aliq).includes('%') ? String(aliq) : (String(aliq).replace('.',',')) + '%');
         tr.innerHTML = `
           <td>${it.tributo||'-'}</td>
-          <td>${it.aliquota_pct ? (it.aliquota_pct==='NA' ? '—' : (String(it.aliquota_pct).replace('.',',')) + '%') : '—'}</td>
+          <td>${aliqFmt}</td>
           <td>${brl(it.valor)}</td>`;
         tb.appendChild(tr);
       });
@@ -281,6 +288,10 @@
         labelPeriodo = 'Anual (compat)';
         mesesInfo = `(${data?.calculo?.periodo_meses || 12} meses)`;
       }
+
+      // Chip Anexo
+      const anexoAtual = bloco?.anexo || data?.calculo?.anexo || '—';
+      document.getElementById('chipAnexo').textContent = anexoAtual || '—';
 
       // KPIs
       document.getElementById('kpiPeriodo').textContent = labelPeriodo;
