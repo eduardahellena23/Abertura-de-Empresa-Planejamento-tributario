@@ -175,6 +175,16 @@
     const pct = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
     const safeGet = (obj, path, fallback=null)=> path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
 
+    // --- helpers para CPP / totais / alíquota ---
+    const sumItens = (itens) => (itens || []).reduce((s, it) => s + Number(it?.valor || 0), 0);
+    const hasCPP = (itens) => (itens || []).some(it => String(it?.tributo || '').toUpperCase().startsWith('CPP'));
+    const aliqFmtOr = (blocoReg, base) => {
+      const txt = blocoReg?.aliquota_fmt || blocoReg?.aliquota_efetiva_pct;
+      if (txt != null && txt !== '') return String(txt).includes('%') ? String(txt) : pct(txt);
+      const total = Number(blocoReg?.imposto ?? 0) || sumItens(blocoReg?.itens);
+      return base > 0 ? pct((total / base) * 100) : '—';
+    };
+
     // Carrega dados do localStorage
     let data = null;
     (function load(){
@@ -293,30 +303,35 @@
       const anexoAtual = bloco?.anexo || data?.calculo?.anexo || '—';
       document.getElementById('chipAnexo').textContent = anexoAtual || '—';
 
-      // KPIs
+      // KPIs (alíquota: usa texto do backend ou calcula; total: usa campo ou soma itens)
+      const totalS = Number(bloco?.simples?.imposto ?? 0) || sumItens(bloco?.simples?.itens);
+      const totalP = Number(bloco?.presumido?.imposto ?? 0) || sumItens(bloco?.presumido?.itens);
+
+      const aliqS = aliqFmtOr(bloco?.simples, base);
+      const aliqP = aliqFmtOr(bloco?.presumido, base);
+
       document.getElementById('kpiPeriodo').textContent = labelPeriodo;
       document.getElementById('kpiMeses').textContent   = mesesInfo;
       document.getElementById('kpiBase').textContent    = brl(base);
+      document.getElementById('kpiAliqS').textContent   = aliqS;
+      document.getElementById('kpiAliqP').textContent   = aliqP;
+      document.getElementById('kpiMelhor').textContent  = bloco?.melhor_regime || '—';
+      document.getElementById('kpiEconomia').textContent= 'Economia estimada: ' + (bloco?.economia_fmt || '—');
 
-      const aliqS = bloco?.simples?.aliquota_fmt || '—';
-      const aliqP = bloco?.presumido?.aliquota_fmt || '—';
-      document.getElementById('kpiAliqS').textContent = aliqS;
-      document.getElementById('kpiAliqP').textContent = aliqP;
-      document.getElementById('kpiMelhor').textContent= bloco?.melhor_regime || '—';
-      document.getElementById('kpiEconomia').textContent = 'Economia estimada: ' + (bloco?.economia_fmt || '—');
-
-      // Gráficos
-      const vS = Number(bloco?.simples?.imposto || 0);
-      const vP = Number(bloco?.presumido?.imposto || 0);
-      setBarChart(vS, vP);
-      setPieChart(vS, vP);
+      // Gráficos (totais já capturam a CPP se presente nos itens)
+      setBarChart(totalS, totalP);
+      setPieChart(totalS, totalP);
 
       // Tabelas detalhadas
       renderTable('tbodySimples',   bloco?.simples?.itens || []);
       renderTable('tbodyPresumido', bloco?.presumido?.itens || []);
 
-      document.getElementById('sumS').textContent = `Total: ${brl(vS)} • Alíquota: ${aliqS}`;
-      document.getElementById('sumP').textContent = `Total: ${brl(vP)} • Alíquota: ${aliqP}`;
+      // Rodapés das tabelas + nota sobre CPP
+      const notaCPP_S = hasCPP(bloco?.simples?.itens) ? ' • inclui CPP' + (anexoAtual==='IV' ? ' (Anexo IV)' : '') : '';
+      const notaCPP_P = hasCPP(bloco?.presumido?.itens) ? ' • inclui CPP' : '';
+
+      document.getElementById('sumS').textContent = `Total: ${brl(totalS)} • Alíquota: ${aliqS}${notaCPP_S}`;
+      document.getElementById('sumP').textContent = `Total: ${brl(totalP)} • Alíquota: ${aliqP}${notaCPP_P}`;
 
       // Atividades (se tiver)
       const tbAtv = document.getElementById('tbodyAtividades');
