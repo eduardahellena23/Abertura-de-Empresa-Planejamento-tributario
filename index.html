@@ -10,6 +10,7 @@
     body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1a202c; }
     .page { display: none; }
     .page-container { z-index: 10; }
+    .badge { font-size: 0.75rem; line-height: 1rem; border-radius: 9999px; padding: 0.125rem 0.5rem; }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -83,7 +84,7 @@
           <input type="text" id="socio_outra_empresa_faturamento_anual" data-money step="0.01" placeholder="Ex.: 600.000" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
-        <!-- CNAE / Pró-labore -->
+        <!-- CNAE principal / Pró-labore -->
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">CNAE (formulário)</label>
           <input type="text" id="cnae" required class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 47.11-3-01">
@@ -91,6 +92,32 @@
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
           <input type="text" id="prolabore" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
+        </div>
+
+        <!-- >>> NOVO: Outros CNAEs (secundários) -->
+        <div class="flex flex-col md:col-span-2">
+          <div class="flex items-center justify-between">
+            <label class="text-sm font-medium text-gray-700">Outros CNAEs (Secundários)</label>
+            <span class="badge bg-indigo-100 text-indigo-700">Opcional</span>
+          </div>
+
+          <div id="outrosCnaesContainer" class="space-y-2 mt-2">
+            <!-- linha inicial -->
+            <div class="flex gap-2">
+              <input type="text" class="flex-1 p-3 border border-gray-300 rounded-md outros-cnaes" placeholder="Ex.: 47.89-0/99">
+              <button type="button" class="rm-cnae px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50" title="Remover" style="display:none;">✕</button>
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <button type="button" id="addCnaeBtn" class="px-3 py-2 text-sm rounded-md border border-indigo-300 text-indigo-700 hover:bg-indigo-50">
+              + Adicionar outro CNAE
+            </button>
+          </div>
+
+          <p class="text-xs text-gray-500 mt-1">
+            Dica: você pode colar o código no formato livre (ex.: “6201501” ou “62.01-5/01”). O backend normaliza.
+          </p>
         </div>
 
         <!-- Faturamento mensal (opcional) -->
@@ -268,7 +295,7 @@
     }
     function maskMoneyInput(el){
       let v = el.value;
-      v = v.replace(/[^\d,]/g, '');          // só dígitos e vírgula
+      v = v.replace(/[^\d,]/g, '');
       const parts = v.split(',');
       let inteiro = parts[0] || '';
       inteiro = inteiro === '' ? '' : formatBRIntWithDots(inteiro);
@@ -328,6 +355,43 @@
     rbt12El && rbt12El.addEventListener('change', sugerirAnexoPorCNAE);
     folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
 
+    // ===== Outros CNAEs: UI dinâmica
+    const outrosCnaesContainer = document.getElementById('outrosCnaesContainer');
+    const addCnaeBtn = document.getElementById('addCnaeBtn');
+
+    function addCnaeRow(value = ''){
+      const row = document.createElement('div');
+      row.className = 'flex gap-2';
+      row.innerHTML = `
+        <input type="text" class="flex-1 p-3 border border-gray-300 rounded-md outros-cnaes" placeholder="Ex.: 62.09-1/00" value="${value}">
+        <button type="button" class="rm-cnae px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50" title="Remover">✕</button>
+      `;
+      outrosCnaesContainer.appendChild(row);
+      wireRemove(row.querySelector('.rm-cnae'));
+    }
+    function wireRemove(btn){
+      btn.addEventListener('click', ()=>{
+        const rows = outrosCnaesContainer.querySelectorAll('.rm-cnae');
+        // nunca apaga a última linha completamente: deixa uma vazia
+        if (rows.length <= 1){
+          const input = outrosCnaesContainer.querySelector('input.outros-cnaes');
+          if (input) input.value = '';
+        } else {
+          btn.parentElement.remove();
+        }
+      });
+    }
+    // habilita remove na linha inicial quando necessário
+    wireRemove(outrosCnaesContainer.querySelector('.rm-cnae'));
+    addCnaeBtn.addEventListener('click', ()=> addCnaeRow(''));
+
+    function collectOutrosCnaes(){
+      const inputs = Array.from(document.querySelectorAll('.outros-cnaes'));
+      return inputs
+        .map(i => (i.value || '').trim())
+        .filter(v => v.length > 0);
+    }
+
     // ===== Payload
     function montarPayload(){
       const folhaMensal = parseBRNumber(document.getElementById('folha').value);
@@ -350,6 +414,8 @@
         socio_outra_empresa_faturamento_anual: parseBRNumber(document.getElementById('socio_outra_empresa_faturamento_anual')?.value),
 
         cnae: document.getElementById('cnae').value || '',
+        outros_cnaes: collectOutrosCnaes(),   // ✅ NOVO CAMPO
+
         prolabore: parseBRNumber(document.getElementById('prolabore').value),
         anexo: document.getElementById('anexo').value || '',
         comparar: document.getElementById('comparar').value || '',
@@ -357,10 +423,8 @@
         tem_funcionarios: document.getElementById('tem_funcionarios').value,
         folha: folhaMensal,
 
-        // >>> novo: envia folha total de 12 meses para Fator R (se existir)
+        // >>> envia folha total de 12 meses para Fator R (se existir)
         folha_12m_total: folhaMensal * 12,
-
-        // >>> NÃO enviamos 'icms' (ISS é automático no back)
       };
     }
 
