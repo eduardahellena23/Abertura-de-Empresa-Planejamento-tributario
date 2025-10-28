@@ -94,7 +94,7 @@
           <input type="text" id="prolabore" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
-        <!-- >>> NOVO: Outros CNAEs (secundários) -->
+        <!-- >>> NOVO: Outros CNAEs (Secundários) -->
         <div class="flex flex-col md:col-span-2">
           <div class="flex items-center justify-between">
             <label class="text-sm font-medium text-gray-700">Outros CNAEs (Secundários)</label>
@@ -116,7 +116,7 @@
           </div>
 
           <p class="text-xs text-gray-500 mt-1">
-            Dica: você pode colar o código no formato livre (ex.: “6201501” ou “62.01-5/01”). O backend normaliza.
+            Dica: pode colar no formato “6201501” ou “62.01-5/01” — o backend normaliza.
           </p>
         </div>
 
@@ -414,7 +414,7 @@
         socio_outra_empresa_faturamento_anual: parseBRNumber(document.getElementById('socio_outra_empresa_faturamento_anual')?.value),
 
         cnae: document.getElementById('cnae').value || '',
-        outros_cnaes: collectOutrosCnaes(),   // ✅ NOVO CAMPO
+        outros_cnaes: collectOutrosCnaes(),   // ✅ NOVO
 
         prolabore: parseBRNumber(document.getElementById('prolabore').value),
         anexo: document.getElementById('anexo').value || '',
@@ -438,6 +438,8 @@
       statusMessage.textContent = 'Enviando dados para análise (dashboard)...';
 
       const dados = montarPayload();
+      localStorage.setItem('payloadAnalise', JSON.stringify(dados)); // ✅ para o Abrir CNAE funcionar
+
       if(!dados.anexo){ statusMessage.textContent = 'Selecione o Anexo do Simples.'; btnDashboard.disabled=false; return; }
       if(!dados.comparar){ statusMessage.textContent = 'Selecione o regime a comparar.'; btnDashboard.disabled=false; return; }
 
