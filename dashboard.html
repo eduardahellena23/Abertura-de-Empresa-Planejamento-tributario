@@ -17,6 +17,8 @@
     .kpi { font-size:1.5rem; font-weight:800 }
     .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid rgba(2,6,23,.12); background:#f8fafc }
     .toggle .on { background:#1d4ed8; color:#fff; }
+    .btn-slim { padding:.35rem .6rem; border:1px solid rgba(2,6,23,.12); border-radius:.5rem; background:#fff; }
+    .btn-slim:hover { background:#f8fafc; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -51,11 +53,11 @@
         </div>
       </div>
       <div class="card">
-        <div class="muted text-xs">CNAE</div>
+        <div class="muted text-xs">CNAE em exibição</div>
         <div id="empresaCNAE" class="text-lg font-semibold"></div>
         <div id="flagsCNAE" class="muted text-xs"></div>
         <div class="mt-2">
-          <span class="muted text-xs">Anexo sugerido</span>
+          <span class="muted text-xs">Anexo</span>
           <div id="chipAnexo" class="chip inline-block mt-1">—</div>
         </div>
       </div>
@@ -140,7 +142,30 @@
       </div>
     </section>
 
-    <!-- Tabela atividades -->
+    <!-- CNAEs: principal + secundários -->
+    <section class="card">
+      <div class="flex items-center justify-between mb-3">
+        <div class="muted text-sm">CNAEs — principal e secundários</div>
+        <div class="muted text-xs">Clique em “Abrir CNAE” para ver o dashboard completo daquele CNAE</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:150px">CNAE</th>
+              <th>Descrição</th>
+              <th>Anexo</th>
+              <th>Simples (R$)</th>
+              <th>Presumido (R$)</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyCnaes"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tabela atividades (separação informada no form) -->
     <section class="card">
       <div class="muted text-sm mb-3">Separação por atividade</div>
       <div class="overflow-x-auto">
@@ -170,12 +195,10 @@
   </main>
 
   <script>
-    // Helpers
+    // ===== Helpers
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
     const pct = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
     const safeGet = (obj, path, fallback=null)=> path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
-
-    // --- helpers para CPP / totais / alíquota ---
     const sumItens = (itens) => (itens || []).reduce((s, it) => s + Number(it?.valor || 0), 0);
     const hasCPP = (itens) => (itens || []).some(it => String(it?.tributo || '').toUpperCase().startsWith('CPP'));
     const aliqFmtOr = (blocoReg, base) => {
@@ -184,8 +207,9 @@
       const total = Number(blocoReg?.imposto ?? 0) || sumItens(blocoReg?.itens);
       return base > 0 ? pct((total / base) * 100) : '—';
     };
+    const qs = (k) => new URLSearchParams(location.search).get(k);
 
-    // Carrega dados do localStorage
+    // ===== Carrega dados do localStorage
     let data = null;
     (function load(){
       try {
@@ -198,22 +222,19 @@
       }
     })();
 
-    // Estado (mensal/anual)
+    // ===== Estado (mensal/anual)
     const hasNew = data && data.calculos && (data.calculos.mensal || data.calculos.anual);
     let periodo = (hasNew ? (data.periodo_padrao || (data.calculos.anual ? 'anual':'mensal')) : 'legacy');
 
-    // Cabeçalhos fixos
+    // ===== Identificação padrão (empresa)
     document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
     document.getElementById('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
     document.getElementById('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
     document.getElementById('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
-    document.getElementById('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
     const regAtual = safeGet(data,'empresa.regime_atual', null);
     if(regAtual) document.getElementById('regimeAtual').textContent = 'Regime atual: ' + regAtual;
-    const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
-    document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
-    // Toggle UI
+    // ===== Toggle UI
     const btnMensal = document.getElementById('btnMensal');
     const btnAnual  = document.getElementById('btnAnual');
     function paintToggle(){
@@ -226,7 +247,7 @@
     btnMensal.addEventListener('click', ()=>{ if(hasNew){ periodo='mensal'; render(); } });
     btnAnual .addEventListener('click', ()=>{ if(hasNew){ periodo='anual';  render(); } });
 
-    // Charts
+    // ===== Charts
     let barChart=null, pieChart=null;
     function setBarChart(vS, vP){
       const ctx = document.getElementById('chartBarras').getContext('2d');
@@ -268,7 +289,7 @@
       });
     }
 
-    // Render principal (base lida do bloco)
+    // ===== Render principal (usa bloco atual)
     function render(){
       paintToggle();
 
@@ -276,7 +297,7 @@
       if (hasNew) {
         bloco = data.calculos[periodo];
 
-        const baseFromBloco = bloco?.base_utilizada;           // PRIORIDADE
+        const baseFromBloco = bloco?.base_utilizada;
         const baseMensal = data?.bases?.mensal ?? null;
         const baseAnual  = data?.bases?.anual  ?? null;
         const legacyBase = data?.calculo?.base_utilizada ?? null;
@@ -285,28 +306,34 @@
           base = (baseFromBloco ?? baseMensal ?? (legacyBase!=null ? legacyBase/12 : 0));
           labelPeriodo = 'Mensal';
           mesesInfo = `(${bloco?.periodo_meses || 1} meses)`;
-          if (baseAnual && base && base > baseAnual) base = baseAnual/12; // sanity
+          if (baseAnual && base && base > baseAnual) base = baseAnual/12;
         } else {
           base = (baseFromBloco ?? baseAnual ?? (legacyBase ?? 0));
           labelPeriodo = 'Anual';
           mesesInfo = `(${bloco?.periodo_meses || 12} meses)`;
         }
       } else {
-        // legado: só anual
         bloco = data.calculo;
         base  = data?.calculo?.base_utilizada ?? 0;
         labelPeriodo = 'Anual (compat)';
         mesesInfo = `(${data?.calculo?.periodo_meses || 12} meses)`;
       }
 
+      // Qual CNAE está em exibição neste momento?
+      const cnaeExib = safeGet(data, 'cnaes.principal.codigo', safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-')));
+      document.getElementById('empresaCNAE').textContent = cnaeExib || '-';
+
+      // Flags
+      const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
+      document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
+
       // Chip Anexo
       const anexoAtual = bloco?.anexo || data?.calculo?.anexo || '—';
       document.getElementById('chipAnexo').textContent = anexoAtual || '—';
 
-      // KPIs (alíquota: usa texto do backend ou calcula; total: usa campo ou soma itens)
+      // KPIs
       const totalS = Number(bloco?.simples?.imposto ?? 0) || sumItens(bloco?.simples?.itens);
       const totalP = Number(bloco?.presumido?.imposto ?? 0) || sumItens(bloco?.presumido?.itens);
-
       const aliqS = aliqFmtOr(bloco?.simples, base);
       const aliqP = aliqFmtOr(bloco?.presumido, base);
 
@@ -318,7 +345,7 @@
       document.getElementById('kpiMelhor').textContent  = bloco?.melhor_regime || '—';
       document.getElementById('kpiEconomia').textContent= 'Economia estimada: ' + (bloco?.economia_fmt || '—');
 
-      // Gráficos (totais já capturam a CPP se presente nos itens)
+      // Gráficos
       setBarChart(totalS, totalP);
       setPieChart(totalS, totalP);
 
@@ -326,14 +353,36 @@
       renderTable('tbodySimples',   bloco?.simples?.itens || []);
       renderTable('tbodyPresumido', bloco?.presumido?.itens || []);
 
-      // Rodapés das tabelas + nota sobre CPP
+      // Rodapés + nota sobre CPP
       const notaCPP_S = hasCPP(bloco?.simples?.itens) ? ' • inclui CPP' + (anexoAtual==='IV' ? ' (Anexo IV)' : '') : '';
       const notaCPP_P = hasCPP(bloco?.presumido?.itens) ? ' • inclui CPP' : '';
-
       document.getElementById('sumS').textContent = `Total: ${brl(totalS)} • Alíquota: ${aliqS}${notaCPP_S}`;
       document.getElementById('sumP').textContent = `Total: ${brl(totalP)} • Alíquota: ${aliqP}${notaCPP_P}`;
 
-      // Atividades (se tiver)
+      // Tabela: CNAEs (principal + secundários)
+      const tbCnaes = document.getElementById('tbodyCnaes');
+      tbCnaes.innerHTML = '';
+      const principal = safeGet(data,'cnaes.principal', null);
+      const secundarios = safeGet(data,'cnaes.secundarios', []) || [];
+
+      function rowCnae(item, isPrincipal=false){
+        const tr = document.createElement('tr');
+        const badge = isPrincipal ? `<span class="chip" title="CNAE principal">Principal</span>` : '';
+        tr.innerHTML = `
+          <td><div class="flex items-center gap-2"><span>${item.codigo || '-'}</span>${badge}</div></td>
+          <td>${item.descricao || '-'}</td>
+          <td>${item.anexo || '—'}</td>
+          <td>${brl(item.simples_anual || 0)}</td>
+          <td>${brl(item.presumido_anual || 0)}</td>
+          <td><button class="btn-slim open-cnae" data-cnae="${item.codigo}" data-url="${item.detalhe_url || ''}">Abrir CNAE</button></td>
+        `;
+        tbCnaes.appendChild(tr);
+      }
+
+      if (principal) rowCnae(principal, true);
+      secundarios.forEach(s => rowCnae(s, false));
+
+      // Tabela: Atividades do formulário (se houver)
       const tbAtv = document.getElementById('tbodyAtividades');
       const itens = safeGet(data,'atividades.itens',[]) || [];
       tbAtv.innerHTML = '';
@@ -351,12 +400,66 @@
         document.getElementById('totaisExport').innerHTML =
           `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
       }
+
+      // Liga os botões Abrir CNAE
+      document.querySelectorAll('.open-cnae').forEach(btn=>{
+        btn.addEventListener('click', ()=> abrirCNAE(btn.dataset.cnae, btn.dataset.url));
+      });
     }
 
-    // Ações
+    // ===== Abrir CNAE (gera dashboard completo do CNAE escolhido)
+    async function abrirCNAE(cnaeCodigo, fallbackUrl){
+      const payloadRaw = localStorage.getItem('payloadAnalise');
+      if (!payloadRaw) {
+        // Sem payload salvo: abre a URL de detalhe (pelo menos navega)
+        if (fallbackUrl) location.href = fallbackUrl;
+        else alert('Para abrir o dashboard completo do CNAE, volte ao formulário e gere novamente (o payload ainda não foi salvo).');
+        return;
+      }
+      try{
+        const payload = JSON.parse(payloadRaw);
+        payload.cnae = cnaeCodigo;                // troca só o CNAE
+        // mantém outros_cnaes como estava (não impacta)
+        const apiUrlBase = (window.apiUrlBaseOverride || "http://127.0.0.1:8000");
+        const resp = await fetch(`${apiUrlBase}/analise`, {
+          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+        });
+        if(!resp.ok){
+          const text = await resp.text();
+          alert(`Erro ao recalcular para o CNAE ${cnaeCodigo}: ${text}`);
+          return;
+        }
+        const json = await resp.json();
+        // atualiza storage e re-renderiza em memória
+        localStorage.setItem('analiseTributaria', JSON.stringify(json));
+        // opcional: marca o CNAE na URL (pra compartilhar o link)
+        const u = new URL(location.href); u.searchParams.set('cnae', cnaeCodigo); history.replaceState({}, '', u.toString());
+        // re-render
+        data = json;
+        periodo = (data.periodo_padrao || (data?.calculos?.anual ? 'anual':'mensal'));
+        render();
+        // feedback sutil
+        toast(`Dashboard atualizado para o CNAE ${cnaeCodigo}`);
+      }catch(e){
+        alert(`Erro de rede ao abrir CNAE: ${e.message}`);
+      }
+    }
+
+    // ===== Toast simples
+    function toast(msg){
+      const el = document.createElement('div');
+      el.textContent = msg;
+      el.style.position='fixed'; el.style.bottom='20px'; el.style.right='20px';
+      el.style.background='#1d4ed8'; el.style.color='#fff'; el.style.padding='10px 14px';
+      el.style.borderRadius='10px'; el.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'; el.style.zIndex=9999;
+      document.body.appendChild(el); setTimeout(()=> el.remove(), 2200);
+    }
+
+    // ===== Ações gerais
     document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = '/form'; });
     document.getElementById('btnLimpar').addEventListener('click', ()=>{
       localStorage.removeItem('analiseTributaria');
+      localStorage.removeItem('payloadAnalise');
       alert('Dados limpos. Voltando ao formulário.');
       location.href = '/form';
     });
@@ -369,7 +472,17 @@
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'atividades.csv'; a.click(); URL.revokeObjectURL(a.href);
     });
 
+    // ===== Render inicial
     render();
+
+    // ===== Se veio com ?cnae= na URL, tenta abrir automaticamente (se houver payload salvo)
+    (async function autoOpenCNAE(){
+      const param = qs('cnae');
+      if (!param) return;
+      const payloadRaw = localStorage.getItem('payloadAnalise');
+      if (!payloadRaw) return; // sem payload não dá pra recalcular; mantém a tela atual
+      await abrirCNAE(param, null);
+    })();
   </script>
 </body>
 </html>
