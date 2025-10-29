@@ -305,6 +305,8 @@
 
       const rbt12   = parseBRNumber(rbt12El?.value || '0') || 0;
       const folha12 = (parseBRNumber(folhaEl?.value || '0') || 0) * 12;
+      
+     localStorage.setItem('ultimoPayload', JSON.stringify(dados));
 
       try{
         statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
@@ -420,6 +422,9 @@
       btnExcel.disabled = true;
       statusMessage.textContent = 'Gerando planilha Excel...';
       const dados = montarPayload(); // sem secundários
+      
+      localStorage.setItem('ultimoPayload', JSON.stringify(dados));
+      
       try{
         const resp = await fetch(`${apiUrlBase}/gerar-planilha`, {
           method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(dados)
@@ -451,3 +456,4 @@
   </script>
 </body>
 </html>
+
