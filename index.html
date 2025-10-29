@@ -10,490 +10,143 @@
     body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; color: #1a202c; }
     .page { display: none; }
     .page-container { z-index: 10; }
-    .badge { font-size: 0.75rem; line-height: 1rem; border-radius: 9999px; padding: 0.125rem 0.5rem; }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-
   <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full page-container">
-    <!-- Logo -->
-    <div class="mb-6 flex justify-center">
-      <img src="Logotipo_primario_medio.jpg" alt="Logo do Escritório" class="h-12 w-auto">
-    </div>
 
-    <!-- Splash -->
-    <div id="splashPage" class="page flex flex-col items-center justify-center text-center">
-      <h1 class="text-3xl font-bold mb-6 text-indigo-600">O que você deseja simular?</h1>
-      <div class="space-y-4 w-full">
-        <button id="btnEmpresa" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-          Planejamento para Empresa
-        </button>
-        <button id="btnPessoaFisica" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-          Cálculo para Pessoa Física
-        </button>
-      </div>
-    </div>
-
-    <!-- Empresa -->
-    <div id="empresaFormPage" class="page">
-      <h1 class="text-3xl font-bold mb-6 text-center text-indigo-600">Simulador de Planejamento Tributário</h1>
+    <!-- Página principal -->
+    <div id="empresaFormPage" class="page" style="display:block">
+      <h1 class="text-3xl font-bold mb-6 text-center text-indigo-600">
+        Simulador de Planejamento Tributário
+      </h1>
 
       <form id="tributarioForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Campos principais -->
-        <div class="flex flex-col md:col-span-2">
+        <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Nome da Empresa</label>
-          <input type="text" id="nome_empresa" required class="mt-1 p-3 border border-gray-300 rounded-md">
-        </div>
-        <div class="flex flex-col md:col-span-2">
-          <label class="text-sm font-medium text-gray-700">CNPJ (Opcional)</label>
-          <input type="text" id="cnpj" class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input id="nome_empresa" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: Minha Empresa LTDA">
         </div>
 
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Abertura ou Constituída?</label>
-          <select id="tipo_empresa" required class="mt-1 p-3 border border-gray-300 rounded-md">
-            <option value="abertura">Abertura</option>
-            <option value="constituida">Constituída</option>
-          </select>
-        </div>
-
-        <!-- RBT12 + Município -->
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Faturamento dos últimos 12 meses (RBT12) – R$</label>
-          <input type="text" id="rbt12" data-money required class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 420.000">
-        </div>
         <div class="flex flex-col">
           <label class="text-sm font-medium text-gray-700">Município</label>
-          <input type="text" id="municipio" required class="mt-1 p-3 border border-gray-300 rounded-md">
+          <input id="municipio" class="mt-1 p-3 border border-gray-300 rounded-md">
         </div>
 
-        <!-- Sócio outra empresa -->
         <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Sócio de outra empresa?</label>
-          <select id="socio_outra_empresa" required class="mt-1 p-3 border border-gray-300 rounded-md">
-            <option value="nao">Não</option>
-            <option value="sim">Sim</option>
+          <label class="text-sm font-medium text-gray-700">RBT12 (Receita Bruta 12m)</label>
+          <input id="rbt12" type="number" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 500000">
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm font-medium text-gray-700">Folha (12m)</label>
+          <input id="folha" type="number" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 100000">
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm font-medium text-gray-700">Pro Labore</label>
+          <input id="prolabore" type="number" class="mt-1 p-3 border border-gray-300 rounded-md">
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm font-medium text-gray-700">CNAE (principal)</label>
+          <input id="cnae" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 47.51-2-01">
+        </div>
+
+        <!-- CNAEs Secundários -->
+        <div class="flex flex-col md:col-span-2">
+          <label class="text-sm font-medium text-gray-700">CNAEs Secundários</label>
+          <textarea id="cnaes_secundarios" rows="3" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="62.01-5-01, 73.11-4-00"></textarea>
+          <small class="text-xs text-gray-500 mt-1">Separe por vírgula, espaço ou quebra de linha</small>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm font-medium text-gray-700">Anexo</label>
+          <select id="anexo" class="mt-1 p-3 border border-gray-300 rounded-md">
+            <option value="">Selecione...</option>
+            <option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option>
           </select>
         </div>
-        <div class="flex flex-col" id="wrap_percentual" style="display:none;">
-          <label class="text-sm font-medium text-gray-700">% do sócio na outra empresa</label>
-          <input type="number" id="socio_outra_empresa_percentual" step="0.01" placeholder="0" class="mt-1 p-3 border border-gray-300 rounded-md">
-        </div>
-        <div class="flex flex-col md:col-span-2" id="wrap_fat_outra" style="display:none;">
-          <label class="text-sm font-medium text-gray-700">Faturamento anual da outra empresa (R$)</label>
-          <input type="text" id="socio_outra_empresa_faturamento_anual" data-money step="0.01" placeholder="Ex.: 600.000" class="mt-1 p-3 border border-gray-300 rounded-md">
-        </div>
-
-        <!-- CNAE principal / Pró-labore -->
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">CNAE (formulário)</label>
-          <input type="text" id="cnae" required class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 47.11-3-01">
-        </div>
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Pró-labore (R$)</label>
-          <input type="text" id="prolabore" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
-        </div>
-
-        <!-- >>> NOVO: Outros CNAEs (Secundários) -->
-        <div class="flex flex-col md:col-span-2">
-          <div class="flex items-center justify-between">
-            <label class="text-sm font-medium text-gray-700">Outros CNAEs (Secundários)</label>
-            <span class="badge bg-indigo-100 text-indigo-700">Opcional</span>
-          </div>
-
-          <div id="outrosCnaesContainer" class="space-y-2 mt-2">
-            <!-- linha inicial -->
-            <div class="flex gap-2">
-              <input type="text" class="flex-1 p-3 border border-gray-300 rounded-md outros-cnaes" placeholder="Ex.: 47.89-0/99">
-              <button type="button" class="rm-cnae px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50" title="Remover" style="display:none;">✕</button>
-            </div>
-          </div>
-
-          <div class="mt-2">
-            <button type="button" id="addCnaeBtn" class="px-3 py-2 text-sm rounded-md border border-indigo-300 text-indigo-700 hover:bg-indigo-50">
-              + Adicionar outro CNAE
-            </button>
-          </div>
-
-          <p class="text-xs text-gray-500 mt-1">
-            Dica: pode colar no formato “6201501” ou “62.01-5/01” — o backend normaliza.
-          </p>
-        </div>
-
-        <!-- Faturamento mensal (opcional) -->
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Faturamento mensal – R$</label>
-          <input type="text" id="faturamento_mensal" data-money step="0.01" class="mt-1 p-3 border border-gray-300 rounded-md" placeholder="Ex.: 35.000">
-        </div>
-
-        <!-- Anexo -->
-        <div class="flex flex-col md:col-span-2">
-          <label class="text-sm font-medium text-gray-700 mb-2">Anexo Simples Nacional</label>
-          <div class="flex items-center gap-2">
-            <select id="anexoSelect" class="mt-1 p-3 border border-gray-300 rounded-md shadow-sm disabled:bg-gray-100 disabled:text-gray-500" disabled>
-              <option value="">Selecione...</option>
-              <option value="I">Anexo I</option>
-              <option value="II">Anexo II</option>
-              <option value="III">Anexo III</option>
-              <option value="IV">Anexo IV</option>
-              <option value="V">Anexo V</option>
-            </select>
-            <button type="button" id="btnLiberarAnexo" class="px-3 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-100">
-              Editar
-            </button>
-          </div>
-          <input type="hidden" id="anexo" required>
-          <p id="anexoHint" class="text-xs text-gray-500 mt-1"></p>
-        </div>
-
-        <!-- Regime a comparar -->
-        <div class="flex flex-col md:col-span-2">
-          <label class="text-sm font-medium text-gray-700 mb-2">Regime a Comparar</label>
-          <div id="comparar-buttons" class="grid grid-cols-1 md:grid-cols-3 gap-2">
-            <button type="button" data-comparar="Simples Nacional" class="comparar-btn py-2 px-4 rounded-md border border-gray-300">Simples Nacional</button>
-            <button type="button" data-comparar="Lucro Presumido"  class="comparar-btn py-2 px-4 rounded-md border border-gray-300">Lucro Presumido</button>
-            <button type="button" data-comparar="Ambos"            class="comparar-btn py-2 px-4 rounded-md border border-gray-300">Ambos</button>
-          </div>
-          <input type="hidden" id="comparar" required>
-        </div>
-
-        <!-- Pró-labore ideal / Funcionários / Folha -->
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Pró-labore Ideal (R$)</label>
-          <input type="text" id="prolabore_ideal" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
-        </div>
-
-        <!-- ISS automático (somente leitura) -->
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">ISS (auto)</label>
-          <input type="text" value="3,00%" class="mt-1 p-3 border border-gray-200 rounded-md bg-gray-100 text-gray-600" disabled>
-          <small class="text-xs text-gray-500">Usando 3% por padrão. Podemos ligar a uma tabela por município/CNAE depois.</small>
-        </div>
 
         <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Possui Funcionários?</label>
-          <select id="tem_funcionarios" required class="mt-1 p-3 border border-gray-300 rounded-md">
-            <option value="nao">Não</option>
-            <option value="sim">Sim</option>
+          <label class="text-sm font-medium text-gray-700">Tipo de Empresa</label>
+          <select id="tipo_empresa" class="mt-1 p-3 border border-gray-300 rounded-md">
+            <option value="constituida">Constituída</option>
+            <option value="abertura">Em abertura</option>
           </select>
         </div>
-        <div class="flex flex-col">
-          <label class="text-sm font-medium text-gray-700">Valor da Folha (R$)</label>
-          <input type="text" id="folha" data-money required class="mt-1 p-3 border border-gray-300 rounded-md">
-        </div>
 
-        <!-- Campos adicionais (empresa constituída) -->
-        <div id="constitFields" class="md:col-span-2 p-4 rounded-lg border border-indigo-200 bg-indigo-50" style="display:none;">
-          <!-- extras -->
-        </div>
-
-        <!-- Ações -->
-        <div class="md:col-span-2 mt-2 text-center">
-          <div class="flex flex-col md:flex-row items-center justify-center gap-3">
-            <button type="submit" id="btnDashboard"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg">
-              Ver Dashboard
-            </button>
-            <button type="button" id="btnExcel"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg">
-              Baixar Planilha (Excel)
-            </button>
-            <button type="button" id="backToSplash1"
-              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-lg">
-              Voltar
-            </button>
-          </div>
+        <div class="md:col-span-2 flex justify-center mt-4 gap-3">
+          <button type="submit" id="btnDashboard" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg">
+            Ver Dashboard
+          </button>
+          <button type="button" id="btnExcel" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg">
+            Baixar Planilha (Excel)
+          </button>
         </div>
       </form>
-    </div>
-
-    <!-- Pessoa Física -->
-    <div id="pessoaFisicaFormPage" class="page">
-      <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Cálculo de Imposto de Renda</h1>
-      <form id="irpfForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- seus campos de IRPF aqui -->
-      </form>
-    </div>
-
-    <!-- Status -->
-    <div class="mt-8 p-4 bg-gray-100 rounded-lg text-left">
-      <h2 class="text-xl font-semibold mb-2">Status do Processo:</h2>
-      <p id="statusMessage" class="text-gray-600">Selecione uma opção para começar.</p>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script>
-    // ===== CONFIG API
-    const apiUrlBase = "http://127.0.0.1:8000";
+    const apiBase = "http://127.0.0.1:8000";
 
-    // ===== Navegação básica
-    const splashPage = document.getElementById('splashPage');
-    const empresaFormPage = document.getElementById('empresaFormPage');
-    const pessoaFisicaFormPage = document.getElementById('pessoaFisicaFormPage');
-    const btnEmpresa = document.getElementById('btnEmpresa');
-    const btnPessoaFisica = document.getElementById('btnPessoaFisica');
-    const backToSplash1 = document.getElementById('backToSplash1');
-    const statusMessage = document.getElementById('statusMessage');
-
-    function showPage(id){
-      document.querySelectorAll('.page').forEach(p => p.style.display = (p.id===id?'flex':'none'));
-      statusMessage.textContent = 'Preencha o formulário e clique no botão.';
-    }
-    window.onload = ()=>showPage('splashPage');
-    btnEmpresa?.addEventListener('click', ()=>showPage('empresaFormPage'));
-    btnPessoaFisica?.addEventListener('click', ()=>showPage('pessoaFisicaFormPage'));
-    backToSplash1?.addEventListener('click', ()=>showPage('splashPage'));
-
-    // ===== Mostrar campos de “sócio de outra empresa”
-    const socioOutra = document.getElementById('socio_outra_empresa');
-    const wrapPercentual = document.getElementById('wrap_percentual');
-    const wrapFatOutra = document.getElementById('wrap_fat_outra');
-    function toggleSocioCampos(){
-      const on = (socioOutra.value || 'nao').toLowerCase() === 'sim';
-      wrapPercentual.style.display = on ? 'block' : 'none';
-      if (wrapFatOutra) wrapFatOutra.style.display = on ? 'block' : 'none';
-    }
-    socioOutra.addEventListener('change', toggleSocioCampos);
-    toggleSocioCampos();
-
-    // ===== Regime a comparar
-    const compararButtons = document.querySelectorAll('.comparar-btn');
-    const compararInput = document.getElementById('comparar');
-    function setCompararActive(btn) {
-      compararButtons.forEach(b => b.classList.remove('bg-indigo-500','text-white'));
-      btn.classList.add('bg-indigo-500','text-white');
-    }
-    compararButtons.forEach(button => button.addEventListener('click', (e) => {
-      e.preventDefault(); setCompararActive(button); compararInput.value = button.dataset.comparar;
-    }));
-
-    // ===== Anexo (select + Editar/Concluir)
-    const anexoHidden   = document.getElementById('anexo');
-    const anexoSelect   = document.getElementById('anexoSelect');
-    const btnLiberar    = document.getElementById('btnLiberarAnexo');
-    const anexoHint     = document.getElementById('anexoHint');
-
-    btnLiberar?.addEventListener('click', ()=>{
-      anexoSelect.disabled = !anexoSelect.disabled;
-      btnLiberar.textContent = anexoSelect.disabled ? 'Editar' : 'Concluir';
-      if (anexoSelect.disabled) {
-        anexoHidden.value = anexoSelect.value || "";
-      }
-    });
-
-    function setAnexoValue(anexo, hintText = ""){
-      anexoSelect.value = anexo || "";
-      anexoHidden.value = anexo || "";
-      anexoHint.textContent = hintText || "";
+    function parseCnaesSecundarios(){
+      const raw = document.getElementById('cnaes_secundarios').value || '';
+      return raw.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
     }
 
-    // ===== Máscara BR (5.000 / 50.000,50)
-    function formatBRIntWithDots(intStr){
-      intStr = intStr.replace(/^0+(?=\d)/, '');
-      return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-    function maskMoneyInput(el){
-      let v = el.value;
-      v = v.replace(/[^\d,]/g, '');
-      const parts = v.split(',');
-      let inteiro = parts[0] || '';
-      inteiro = inteiro === '' ? '' : formatBRIntWithDots(inteiro);
-      let dec = parts[1] != null ? parts[1].slice(0,2) : null;
-      el.value = dec != null ? `${inteiro},${dec}` : inteiro;
-    }
-    function attachMoneyMask(){
-      document.querySelectorAll('input[data-money]').forEach(el=>{
-        el.addEventListener('input', ()=> maskMoneyInput(el));
-        el.addEventListener('blur', ()=> maskMoneyInput(el));
-      });
-    }
-    function parseBRNumber(str){
-      if(!str) return 0;
-      return parseFloat(String(str).replace(/\./g, '').replace(',', '.')) || 0;
-    }
-    window.addEventListener('DOMContentLoaded', attachMoneyMask);
-
-    // ===== CNAE → sugere Anexo (usa RBT12 e Folha*12)
-    const cnaeInput  = document.getElementById('cnae');
-    const rbt12El    = document.getElementById('rbt12');
-    const folhaEl    = document.getElementById('folha');
-
-    async function sugerirAnexoPorCNAE(){
-      const raw = (cnaeInput?.value || '').trim();
-      if(!raw) return;
-
-      const rbt12   = parseBRNumber(rbt12El?.value || '0') || 0;
-      const folha12 = (parseBRNumber(folhaEl?.value || '0') || 0) * 12;
-
-      try{
-        statusMessage.textContent = 'Consultando CNAE para sugerir Anexo...';
-        const url = `${apiUrlBase}/cnae/${encodeURIComponent(raw)}?rbt12=${rbt12}&folha12=${folha12}`;
-        const resp = await fetch(url);
-        if(!resp.ok){
-          const txt = await resp.text();
-          throw new Error(txt || 'CNAE não mapeado.');
-        }
-        const json = await resp.json();
-
-        const possiveis = (json.anexos_possiveis || []).join(' / ');
-        const pres = json.presuncao_lp ? ` • Presunção LP: ${json.presuncao_lp}` : '';
-        const dica = `CNAE ${json.cnae}: ${json.descricao} • Possíveis: ${possiveis}${json.fator_r ? ' (Fator R)' : ''}. Sugerido: ${json.sugestao_anexo}.${pres}`;
-        setAnexoValue(json.sugestao_anexo, dica);
-
-        anexoSelect.disabled = true;
-        statusMessage.textContent = 'Anexo sugerido automaticamente pelo CNAE.';
-      }catch(e){
-        console.warn('[CNAE] erro:', e.message);
-        setAnexoValue("", "CNAE não mapeado. Clique em Editar e selecione o Anexo manualmente.");
-        anexoSelect.disabled = false;
-        statusMessage.textContent = 'CNAE não mapeado. Selecione manualmente.';
-      }
-    }
-
-    cnaeInput && cnaeInput.addEventListener('blur', sugerirAnexoPorCNAE);
-    rbt12El && rbt12El.addEventListener('change', sugerirAnexoPorCNAE);
-    folhaEl && folhaEl.addEventListener('change', sugerirAnexoPorCNAE);
-
-    // ===== Outros CNAEs: UI dinâmica
-    const outrosCnaesContainer = document.getElementById('outrosCnaesContainer');
-    const addCnaeBtn = document.getElementById('addCnaeBtn');
-
-    function addCnaeRow(value = ''){
-      const row = document.createElement('div');
-      row.className = 'flex gap-2';
-      row.innerHTML = `
-        <input type="text" class="flex-1 p-3 border border-gray-300 rounded-md outros-cnaes" placeholder="Ex.: 62.09-1/00" value="${value}">
-        <button type="button" class="rm-cnae px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-50" title="Remover">✕</button>
-      `;
-      outrosCnaesContainer.appendChild(row);
-      wireRemove(row.querySelector('.rm-cnae'));
-    }
-    function wireRemove(btn){
-      btn.addEventListener('click', ()=>{
-        const rows = outrosCnaesContainer.querySelectorAll('.rm-cnae');
-        // nunca apaga a última linha completamente: deixa uma vazia
-        if (rows.length <= 1){
-          const input = outrosCnaesContainer.querySelector('input.outros-cnaes');
-          if (input) input.value = '';
-        } else {
-          btn.parentElement.remove();
-        }
-      });
-    }
-    // habilita remove na linha inicial quando necessário
-    wireRemove(outrosCnaesContainer.querySelector('.rm-cnae'));
-    addCnaeBtn.addEventListener('click', ()=> addCnaeRow(''));
-
-    function collectOutrosCnaes(){
-      const inputs = Array.from(document.querySelectorAll('.outros-cnaes'));
-      return inputs
-        .map(i => (i.value || '').trim())
-        .filter(v => v.length > 0);
-    }
-
-    // ===== Payload
     function montarPayload(){
-      const folhaMensal = parseBRNumber(document.getElementById('folha').value);
+      const folha = parseFloat(document.getElementById('folha').value || '0');
       return {
         nome_empresa: document.getElementById('nome_empresa').value || '',
-        cnpj: document.getElementById('cnpj').value || null,
-        tipo_empresa: document.getElementById('tipo_empresa').value,
         municipio: document.getElementById('municipio').value || '',
-
-        // números com máscara → parseBRNumber
-        rbt12: parseBRNumber(document.getElementById('rbt12').value),
-        faturamento_mensal: parseBRNumber(document.getElementById('faturamento_mensal')?.value),
-
-        // legado (compat no backend)
-        faturamento: 0,
-
-        // Sócio em outra empresa
-        socio_outra_empresa: document.getElementById('socio_outra_empresa').value,
-        socio_outra_empresa_percentual: parseFloat(document.getElementById('socio_outra_empresa_percentual').value || '0'),
-        socio_outra_empresa_faturamento_anual: parseBRNumber(document.getElementById('socio_outra_empresa_faturamento_anual')?.value),
-
+        tipo_empresa: document.getElementById('tipo_empresa').value || 'constituida',
+        rbt12: parseFloat(document.getElementById('rbt12').value || '0'),
+        prolabore: parseFloat(document.getElementById('prolabore').value || '0'),
+        folha: folha,
+        folha_12m_total: folha,
         cnae: document.getElementById('cnae').value || '',
-        outros_cnaes: collectOutrosCnaes(),   // ✅ NOVO
-
-        prolabore: parseBRNumber(document.getElementById('prolabore').value),
+        cnaes_secundarios: parseCnaesSecundarios(),
         anexo: document.getElementById('anexo').value || '',
-        comparar: document.getElementById('comparar').value || '',
-        prolabore_ideal: parseBRNumber(document.getElementById('prolabore_ideal').value),
-        tem_funcionarios: document.getElementById('tem_funcionarios').value,
-        folha: folhaMensal,
-
-        // >>> envia folha total de 12 meses para Fator R (se existir)
-        folha_12m_total: folhaMensal * 12,
+        comparar: '',
+        socio_outra_empresa: 'nao'
       };
     }
 
-    // ===== Submit: Dashboard
-    const tributarioForm = document.getElementById('tributarioForm');
-    const btnDashboard   = document.getElementById('btnDashboard');
-
-    tributarioForm.addEventListener('submit', async (e)=>{
+    document.getElementById('tributarioForm').addEventListener('submit', async e=>{
       e.preventDefault();
-      btnDashboard.disabled = true;
-      statusMessage.textContent = 'Enviando dados para análise (dashboard)...';
-
-      const dados = montarPayload();
-      localStorage.setItem('payloadAnalise', JSON.stringify(dados)); // ✅ para o Abrir CNAE funcionar
-
-      if(!dados.anexo){ statusMessage.textContent = 'Selecione o Anexo do Simples.'; btnDashboard.disabled=false; return; }
-      if(!dados.comparar){ statusMessage.textContent = 'Selecione o regime a comparar.'; btnDashboard.disabled=false; return; }
-
+      const payload = montarPayload();
       try{
-        const resp = await fetch(`${apiUrlBase}/analise`, {
-          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(dados)
+        const resp = await fetch(`${apiBase}/analise`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
         });
-        if(!resp.ok){
-          const text = await resp.text();
-          statusMessage.textContent = `Erro (${resp.status}): ${text}`;
-          return;
-        }
         const json = await resp.json();
         localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        window.location.href = "dashboard.html"; // usar o estático
-      }catch(e){
-        statusMessage.textContent = `Erro de rede: ${e.message}`;
-      }finally{
-        btnDashboard.disabled = false;
+        localStorage.setItem('ultimoPayload', JSON.stringify(payload));
+        location.href = '/dashboard';
+      }catch(err){
+        alert('Erro ao gerar análise: '+err.message);
       }
     });
 
-    // ===== Excel
-    const btnExcel = document.getElementById('btnExcel');
-    btnExcel.addEventListener('click', async ()=>{
-      btnExcel.disabled = true;
-      statusMessage.textContent = 'Gerando planilha Excel...';
-      const dados = montarPayload();
+    document.getElementById('btnExcel').addEventListener('click', async ()=>{
+      const payload = montarPayload();
       try{
-        const resp = await fetch(`${apiUrlBase}/gerar-planilha`, {
-          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(dados)
+        const resp = await fetch(`${apiBase}/gerar-planilha`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
         });
-        if(!resp.ok){
-          const text = await resp.text();
-          statusMessage.textContent = `Erro (${resp.status}): ${text}`;
-          return;
+        const json = await resp.json();
+        if(json.download_url_query){
+          window.open(`${apiBase}${json.download_url_query}`, '_blank');
+        } else {
+          alert('Erro: '+JSON.stringify(json));
         }
-        const { file } = await resp.json();
-        const a = document.createElement('a');
-        a.href = `${apiUrlBase}/baixar-planilha/${file}`;
-        a.setAttribute('download', file);
-        document.body.appendChild(a); a.click(); a.remove();
-        statusMessage.textContent = `Download da planilha "${file}" iniciado.`;
-      }catch(e){
-        statusMessage.textContent = `Erro de rede: ${e.message}`;
-      }finally{
-        btnExcel.disabled = false;
-      }
-    });
-
-    // Sugere anexo ao carregar
-    window.addEventListener('DOMContentLoaded', ()=>{
-      if (cnaeInput && cnaeInput.value.trim()){
-        sugerirAnexoPorCNAE();
+      }catch(err){
+        alert('Falha ao gerar planilha: '+err.message);
       }
     });
   </script>
