@@ -17,8 +17,8 @@
     .kpi { font-size:1.5rem; font-weight:800 }
     .chip { font-size:.75rem; padding:.15rem .5rem; border-radius:.5rem; border:1px solid rgba(2,6,23,.12); background:#f8fafc }
     .toggle .on { background:#1d4ed8; color:#fff; }
-    .btn-slim { padding:.35rem .6rem; border:1px solid rgba(2,6,23,.12); border-radius:.5rem; background:#fff; }
-    .btn-slim:hover { background:#f8fafc; }
+    .btn { padding:.5rem .75rem; border-radius:.5rem; border:1px solid rgba(2,6,23,.12); background:#fff; }
+    .btn:hover { background:#f8fafc; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -53,11 +53,11 @@
         </div>
       </div>
       <div class="card">
-        <div class="muted text-xs">CNAE em exibição</div>
+        <div class="muted text-xs">CNAE</div>
         <div id="empresaCNAE" class="text-lg font-semibold"></div>
         <div id="flagsCNAE" class="muted text-xs"></div>
         <div class="mt-2">
-          <span class="muted text-xs">Anexo</span>
+          <span class="muted text-xs">Anexo sugerido</span>
           <div id="chipAnexo" class="chip inline-block mt-1">—</div>
         </div>
       </div>
@@ -142,30 +142,7 @@
       </div>
     </section>
 
-    <!-- CNAEs: principal + secundários -->
-    <section class="card">
-      <div class="flex items-center justify-between mb-3">
-        <div class="muted text-sm">CNAEs — principal e secundários</div>
-        <div class="muted text-xs">Clique em “Abrir CNAE” para ver o dashboard completo daquele CNAE</div>
-      </div>
-      <div class="overflow-x-auto">
-        <table>
-          <thead>
-            <tr>
-              <th style="min-width:150px">CNAE</th>
-              <th>Descrição</th>
-              <th>Anexo</th>
-              <th>Simples (R$)</th>
-              <th>Presumido (R$)</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyCnaes"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Tabela atividades (separação informada no form) -->
+    <!-- Separação por atividade (existente) -->
     <section class="card">
       <div class="muted text-sm mb-3">Separação por atividade</div>
       <div class="overflow-x-auto">
@@ -186,6 +163,29 @@
       </div>
     </section>
 
+    <!-- NOVO: CNAEs (principal + secundários) com botão Abrir -->
+    <section class="card">
+      <div class="flex items-center justify-between">
+        <div class="muted text-sm mb-3">CNAEs (principal + secundários)</div>
+        <div class="muted text-xs" id="hintCnaes">Carregando...</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:120px;">CNAE</th>
+              <th>Descrição</th>
+              <th style="min-width:110px;">Anexo sugerido</th>
+              <th style="min-width:120px;">Simples (R$)</th>
+              <th style="min-width:140px;">Presumido (R$)</th>
+              <th style="min-width:120px;">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyCnaes"></tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Ações -->
     <section class="flex flex-col md:flex-row gap-3 pb-10">
       <button id="btnVoltar" class="px-4 py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">← Voltar ao formulário</button>
@@ -195,7 +195,10 @@
   </main>
 
   <script>
-    // ===== Helpers
+    // ====== CONFIG
+    const apiUrlBase = "http://127.0.0.1:8000";
+
+    // ====== Helpers
     const brl = n => 'R$ ' + Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
     const pct = n => Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2}) + '%';
     const safeGet = (obj, path, fallback=null)=> path.split('.').reduce((acc,k)=> (acc && acc[k]!=null) ? acc[k] : null, obj) ?? fallback;
@@ -207,9 +210,8 @@
       const total = Number(blocoReg?.imposto ?? 0) || sumItens(blocoReg?.itens);
       return base > 0 ? pct((total / base) * 100) : '—';
     };
-    const qs = (k) => new URLSearchParams(location.search).get(k);
 
-    // ===== Carrega dados do localStorage
+    // ====== Carrega análise principal
     let data = null;
     (function load(){
       try {
@@ -222,19 +224,22 @@
       }
     })();
 
-    // ===== Estado (mensal/anual)
+    // ====== Estado (mensal/anual)
     const hasNew = data && data.calculos && (data.calculos.mensal || data.calculos.anual);
     let periodo = (hasNew ? (data.periodo_padrao || (data.calculos.anual ? 'anual':'mensal')) : 'legacy');
 
-    // ===== Identificação padrão (empresa)
+    // ====== Cabeçalhos fixos
     document.getElementById('empresaNome').textContent = safeGet(data,'empresa.nome','-');
     document.getElementById('empresaCNPJ').textContent = safeGet(data,'empresa.cnpj','');
     document.getElementById('empresaMunicipio').textContent = safeGet(data,'empresa.municipio','-');
     document.getElementById('empresaTipo').textContent = 'Tipo: ' + (safeGet(data,'empresa.tipo','-'));
+    document.getElementById('empresaCNAE').textContent = safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-'));
     const regAtual = safeGet(data,'empresa.regime_atual', null);
     if(regAtual) document.getElementById('regimeAtual').textContent = 'Regime atual: ' + regAtual;
+    const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
+    document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
-    // ===== Toggle UI
+    // ====== Toggle UI
     const btnMensal = document.getElementById('btnMensal');
     const btnAnual  = document.getElementById('btnAnual');
     function paintToggle(){
@@ -244,10 +249,10 @@
       btnMensal.disabled = disabled; btnAnual.disabled = disabled;
       if(disabled){ btnMensal.title = btnAnual.title = 'Resposta antiga (sem mensal/anual)'; }
     }
-    btnMensal.addEventListener('click', ()=>{ if(hasNew){ periodo='mensal'; render(); } });
-    btnAnual .addEventListener('click', ()=>{ if(hasNew){ periodo='anual';  render(); } });
+    btnMensal.addEventListener('click', ()=>{ if(hasNew){ periodo='mensal'; render(); renderCnaesTable(); } });
+    btnAnual .addEventListener('click', ()=>{ if(hasNew){ periodo='anual';  render(); renderCnaesTable(); } });
 
-    // ===== Charts
+    // ====== Charts
     let barChart=null, pieChart=null;
     function setBarChart(vS, vP){
       const ctx = document.getElementById('chartBarras').getContext('2d');
@@ -289,7 +294,7 @@
       });
     }
 
-    // ===== Render principal (usa bloco atual)
+    // ====== Render principal
     function render(){
       paintToggle();
 
@@ -297,7 +302,7 @@
       if (hasNew) {
         bloco = data.calculos[periodo];
 
-        const baseFromBloco = bloco?.base_utilizada;
+        const baseFromBloco = bloco?.base_utilizada;           // PRIORIDADE
         const baseMensal = data?.bases?.mensal ?? null;
         const baseAnual  = data?.bases?.anual  ?? null;
         const legacyBase = data?.calculo?.base_utilizada ?? null;
@@ -306,26 +311,19 @@
           base = (baseFromBloco ?? baseMensal ?? (legacyBase!=null ? legacyBase/12 : 0));
           labelPeriodo = 'Mensal';
           mesesInfo = `(${bloco?.periodo_meses || 1} meses)`;
-          if (baseAnual && base && base > baseAnual) base = baseAnual/12;
+          if (baseAnual && base && base > baseAnual) base = baseAnual/12; // sanity
         } else {
           base = (baseFromBloco ?? baseAnual ?? (legacyBase ?? 0));
           labelPeriodo = 'Anual';
           mesesInfo = `(${bloco?.periodo_meses || 12} meses)`;
         }
       } else {
+        // legado: só anual
         bloco = data.calculo;
         base  = data?.calculo?.base_utilizada ?? 0;
         labelPeriodo = 'Anual (compat)';
         mesesInfo = `(${data?.calculo?.periodo_meses || 12} meses)`;
       }
-
-      // Qual CNAE está em exibição neste momento?
-      const cnaeExib = safeGet(data, 'cnaes.principal.codigo', safeGet(data,'empresa.cnae_atual', safeGet(data,'empresa.cnae_form','-')));
-      document.getElementById('empresaCNAE').textContent = cnaeExib || '-';
-
-      // Flags
-      const imp = safeGet(data,'empresa.cnae_impeditivo_simples', null);
-      document.getElementById('flagsCNAE').textContent = (imp===true ? 'CNAE impeditivo ao Simples' : imp===false ? 'CNAE permitido no Simples' : '');
 
       // Chip Anexo
       const anexoAtual = bloco?.anexo || data?.calculo?.anexo || '—';
@@ -334,6 +332,7 @@
       // KPIs
       const totalS = Number(bloco?.simples?.imposto ?? 0) || sumItens(bloco?.simples?.itens);
       const totalP = Number(bloco?.presumido?.imposto ?? 0) || sumItens(bloco?.presumido?.itens);
+
       const aliqS = aliqFmtOr(bloco?.simples, base);
       const aliqP = aliqFmtOr(bloco?.presumido, base);
 
@@ -354,35 +353,13 @@
       renderTable('tbodyPresumido', bloco?.presumido?.itens || []);
 
       // Rodapés + nota sobre CPP
-      const notaCPP_S = hasCPP(bloco?.simples?.itens) ? ' • inclui CPP' + (anexoAtual==='IV' ? ' (Anexo IV)' : '') : '';
+      const notaCPP_S = hasCPP(bloco?.simples?.itens) ? ' • inclui CPP' + ((anexoAtual||'')==='IV' ? ' (Anexo IV)' : '') : '';
       const notaCPP_P = hasCPP(bloco?.presumido?.itens) ? ' • inclui CPP' : '';
+
       document.getElementById('sumS').textContent = `Total: ${brl(totalS)} • Alíquota: ${aliqS}${notaCPP_S}`;
       document.getElementById('sumP').textContent = `Total: ${brl(totalP)} • Alíquota: ${aliqP}${notaCPP_P}`;
 
-      // Tabela: CNAEs (principal + secundários)
-      const tbCnaes = document.getElementById('tbodyCnaes');
-      tbCnaes.innerHTML = '';
-      const principal = safeGet(data,'cnaes.principal', null);
-      const secundarios = safeGet(data,'cnaes.secundarios', []) || [];
-
-      function rowCnae(item, isPrincipal=false){
-        const tr = document.createElement('tr');
-        const badge = isPrincipal ? `<span class="chip" title="CNAE principal">Principal</span>` : '';
-        tr.innerHTML = `
-          <td><div class="flex items-center gap-2"><span>${item.codigo || '-'}</span>${badge}</div></td>
-          <td>${item.descricao || '-'}</td>
-          <td>${item.anexo || '—'}</td>
-          <td>${brl(item.simples_anual || 0)}</td>
-          <td>${brl(item.presumido_anual || 0)}</td>
-          <td><button class="btn-slim open-cnae" data-cnae="${item.codigo}" data-url="${item.detalhe_url || ''}">Abrir CNAE</button></td>
-        `;
-        tbCnaes.appendChild(tr);
-      }
-
-      if (principal) rowCnae(principal, true);
-      secundarios.forEach(s => rowCnae(s, false));
-
-      // Tabela: Atividades do formulário (se houver)
+      // Atividades (se tiver)
       const tbAtv = document.getElementById('tbodyAtividades');
       const itens = safeGet(data,'atividades.itens',[]) || [];
       tbAtv.innerHTML = '';
@@ -400,66 +377,173 @@
         document.getElementById('totaisExport').innerHTML =
           `Exportação (totais): 12m <b>${tot.receita_12m_fmt || brl(tot.receita_12m||0)}</b> • Próx. ano <b>${tot.estimativa_prox_ano_fmt || brl(tot.estimativa_prox_ano||0)}</b>`;
       }
-
-      // Liga os botões Abrir CNAE
-      document.querySelectorAll('.open-cnae').forEach(btn=>{
-        btn.addEventListener('click', ()=> abrirCNAE(btn.dataset.cnae, btn.dataset.url));
-      });
     }
 
-    // ===== Abrir CNAE (gera dashboard completo do CNAE escolhido)
-    async function abrirCNAE(cnaeCodigo, fallbackUrl){
-      const payloadRaw = localStorage.getItem('payloadAnalise');
-      if (!payloadRaw) {
-        // Sem payload salvo: abre a URL de detalhe (pelo menos navega)
-        if (fallbackUrl) location.href = fallbackUrl;
-        else alert('Para abrir o dashboard completo do CNAE, volte ao formulário e gere novamente (o payload ainda não foi salvo).');
+    // ====== NOVO: Tabela de CNAEs (principal + secundários)
+    const cnaesCache = new Map(); // codigo -> { cnaeInfo, analise: {mensal, anual} }
+    function getUltimoPayload(){
+      try { return JSON.parse(localStorage.getItem('ultimoPayload') || '{}'); }
+      catch { return {}; }
+    }
+    function normalizeArrayCnaes(rawList){
+      if(!rawList) return [];
+      return rawList.map(s => String(s||'').trim()).filter(Boolean);
+    }
+
+    async function fetchCnaeInfo(codigo, rbt12, folha12){
+      const url = `${apiUrlBase}/cnae/${encodeURIComponent(codigo)}?rbt12=${Number(rbt12||0)}&folha12=${Number(folha12||0)}`;
+      const resp = await fetch(url);
+      if(!resp.ok) throw new Error(await resp.text() || 'Erro ao consultar CNAE');
+      return resp.json();
+    }
+
+    async function fetchAnaliseForCnae(payloadBase, codigo, anexoSug){
+      const p = { ...payloadBase, cnae: codigo, anexo: anexoSug || payloadBase.anexo };
+      const resp = await fetch(`${apiUrlBase}/analise`, {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(p)
+      });
+      if(!resp.ok) throw new Error(await resp.text() || 'Erro ao analisar CNAE');
+      return resp.json();
+    }
+
+    function totalFromBloco(bloco){
+      if(!bloco) return { simples: 0, presumido: 0 };
+      const S = Number(bloco?.simples?.imposto ?? 0) || sumItens(bloco?.simples?.itens);
+      const P = Number(bloco?.presumido?.imposto ?? 0) || sumItens(bloco?.presumido?.itens);
+      return { simples: S, presumido: P };
+    }
+
+    async function renderCnaesTable(){
+      const tbody = document.getElementById('tbodyCnaes');
+      const hint  = document.getElementById('hintCnaes');
+      tbody.innerHTML = '';
+      hint.textContent = 'Carregando...';
+
+      const ultimo = getUltimoPayload();
+      const principal = safeGet(data,'empresa.cnae_form', null) || safeGet(data,'empresa.cnae_atual', null);
+      const secundarios = normalizeArrayCnaes(ultimo?.cnaes_secundarios || []);
+      const todos = [principal, ...secundarios].filter(Boolean);
+
+      if(todos.length === 0){
+        hint.textContent = 'Nenhum CNAE informado.';
         return;
       }
-      try{
-        const payload = JSON.parse(payloadRaw);
-        payload.cnae = cnaeCodigo;                // troca só o CNAE
-        // mantém outros_cnaes como estava (não impacta)
-        const apiUrlBase = (window.apiUrlBaseOverride || "http://127.0.0.1:8000");
-        const resp = await fetch(`${apiUrlBase}/analise`, {
-          method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-        });
-        if(!resp.ok){
-          const text = await resp.text();
-          alert(`Erro ao recalcular para o CNAE ${cnaeCodigo}: ${text}`);
-          return;
+
+      // bases para consulta/análise
+      const rbt12 = safeGet(data,'bases.anual', 0);
+      const folhaMensal = ultimo?.folha || 0;
+      const folha12 = (Number(folhaMensal)||0) * 12;
+
+      // payload base para /analise
+      const payloadBase = {
+        nome_empresa: ultimo?.nome_empresa || safeGet(data,'empresa.nome',''),
+        cnpj: ultimo?.cnpj || safeGet(data,'empresa.cnpj',''),
+        tipo_empresa: ultimo?.tipo_empresa || (safeGet(data,'empresa.tipo','abertura') === 'abertura' ? 'abertura' : 'constituida'),
+        municipio: ultimo?.municipio || safeGet(data,'empresa.municipio',''),
+
+        rbt12: rbt12,
+        faturamento_mensal: safeGet(data,'bases.mensal', 0),
+
+        // legado/compat
+        faturamento: 0,
+
+        socio_outra_empresa: ultimo?.socio_outra_empresa || 'nao',
+        socio_outra_empresa_percentual: ultimo?.socio_outra_empresa_percentual || 0,
+        socio_outra_empresa_faturamento_anual: ultimo?.socio_outra_empresa_faturamento_anual || 0,
+
+        // estes serão trocados por CNAE/Anexo a cada linha
+        cnae: principal || '',
+        prolabore: ultimo?.prolabore || safeGet(data,'prolabore',0) || 0,
+        anexo: ultimo?.anexo || safeGet(data, 'calculo.anexo',''),
+        comparar: ultimo?.comparar || safeGet(data,'comparar','Ambos'),
+        prolabore_ideal: ultimo?.prolabore_ideal || 0,
+        tem_funcionarios: ultimo?.tem_funcionarios || 'nao',
+        folha: ultimo?.folha || 0,
+        folha_12m_total: folha12
+      };
+
+      // carregar linhas em série (mais simples) — se quiser, dá pra paralelizar
+      for(const codigo of todos){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><code>${codigo}</code></td>
+          <td class="muted">—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><button class="btn" disabled>Carregando...</button></td>`;
+        tbody.appendChild(tr);
+
+        try{
+          // cache?
+          let entry = cnaesCache.get(codigo);
+          if(!entry){
+            // 1) info do CNAE (sugestão de anexo)
+            const info = await fetchCnaeInfo(codigo, rbt12, folha12).catch(()=>null);
+
+            // 2) análises mensal e anual (pra alternar sem recarregar)
+            const analiseAnual  = await fetchAnaliseForCnae(payloadBase, codigo, info?.sugestao_anexo || payloadBase.anexo);
+            // refaz para mensal trocando o "periodo" por base mensal (já enviamos faturamento_mensal em payloadBase)
+            // o endpoint já retorna ambos (mensal e anual) — ótimo, usamos do próprio retorno.
+            entry = { cnaeInfo: info, analise: analiseAnual };
+            cnaesCache.set(codigo, entry);
+          }
+
+          const info = entry.cnaeInfo;
+          const analise = entry.analise;
+
+          // pega o bloco do período atual
+          const bloco = hasNew ? analise.calculos[periodo] : analise.calculo;
+          const { simples, presumido } = totalFromBloco(bloco);
+
+          const descricao = info?.descricao || '—';
+          const anexo = info?.sugestao_anexo || (bloco?.anexo || '—');
+
+          tr.children[1].textContent = descricao;
+          tr.children[2].textContent = anexo || '—';
+          tr.children[3].textContent = brl(simples);
+          tr.children[4].textContent = brl(presumido);
+
+          const btn = tr.children[5].querySelector('button');
+          btn.disabled = false;
+          btn.textContent = 'Abrir CNAE';
+          btn.addEventListener('click', async ()=>{
+            try{
+              // Podemos reaproveitar a análise já feita pra esse CNAE:
+              localStorage.setItem('analiseTributaria', JSON.stringify(analise));
+              // Também atualizar ultimoPayload com o CNAE escolhido como "atual"
+              const up = getUltimoPayload();
+              up.cnae = codigo;
+              up.anexo = anexo;
+              localStorage.setItem('ultimoPayload', JSON.stringify(up));
+              location.reload(); // recarrega o dashboard com esse CNAE
+            }catch(e){
+              alert('Não foi possível abrir o CNAE selecionado.');
+            }
+          });
+
+        }catch(err){
+          tr.children[1].textContent = '—';
+          tr.children[2].textContent = '—';
+          tr.children[3].textContent = '—';
+          tr.children[4].textContent = '—';
+          const btn = tr.children[5].querySelector('button');
+          btn.textContent = 'Abrir CNAE';
+          btn.disabled = true;
+          console.warn('Falha CNAE', codigo, err);
         }
-        const json = await resp.json();
-        // atualiza storage e re-renderiza em memória
-        localStorage.setItem('analiseTributaria', JSON.stringify(json));
-        // opcional: marca o CNAE na URL (pra compartilhar o link)
-        const u = new URL(location.href); u.searchParams.set('cnae', cnaeCodigo); history.replaceState({}, '', u.toString());
-        // re-render
-        data = json;
-        periodo = (data.periodo_padrao || (data?.calculos?.anual ? 'anual':'mensal'));
-        render();
-        // feedback sutil
-        toast(`Dashboard atualizado para o CNAE ${cnaeCodigo}`);
-      }catch(e){
-        alert(`Erro de rede ao abrir CNAE: ${e.message}`);
       }
+
+      const principal = safeGet(data,'empresa.cnae_form', null) || safeGet(data,'empresa.cnae_atual', null);
+      const secundarios = normalizeArrayCnaes((getUltimoPayload()?.cnaes_secundarios)||[]);
+      document.getElementById('hintCnaes').textContent = `Principal: ${principal || '—'} • Secundários: ${secundarios.length}`;
     }
 
-    // ===== Toast simples
-    function toast(msg){
-      const el = document.createElement('div');
-      el.textContent = msg;
-      el.style.position='fixed'; el.style.bottom='20px'; el.style.right='20px';
-      el.style.background='#1d4ed8'; el.style.color='#fff'; el.style.padding='10px 14px';
-      el.style.borderRadius='10px'; el.style.boxShadow='0 6px 20px rgba(0,0,0,.12)'; el.style.zIndex=9999;
-      document.body.appendChild(el); setTimeout(()=> el.remove(), 2200);
-    }
-
-    // ===== Ações gerais
+    // ====== Ações gerais
     document.getElementById('btnVoltar').addEventListener('click', ()=>{ location.href = '/form'; });
     document.getElementById('btnLimpar').addEventListener('click', ()=>{
       localStorage.removeItem('analiseTributaria');
-      localStorage.removeItem('payloadAnalise');
+      localStorage.removeItem('ultimoPayload');
       alert('Dados limpos. Voltando ao formulário.');
       location.href = '/form';
     });
@@ -472,17 +556,9 @@
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'atividades.csv'; a.click(); URL.revokeObjectURL(a.href);
     });
 
-    // ===== Render inicial
+    // ====== Start
     render();
-
-    // ===== Se veio com ?cnae= na URL, tenta abrir automaticamente (se houver payload salvo)
-    (async function autoOpenCNAE(){
-      const param = qs('cnae');
-      if (!param) return;
-      const payloadRaw = localStorage.getItem('payloadAnalise');
-      if (!payloadRaw) return; // sem payload não dá pra recalcular; mantém a tela atual
-      await abrirCNAE(param, null);
-    })();
+    renderCnaesTable();
   </script>
 </body>
 </html>
